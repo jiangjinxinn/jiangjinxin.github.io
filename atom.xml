@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiangjinxinn.github.io</id>
-    <title>Gridea</title>
-    <updated>2019-10-04T11:11:56.456Z</updated>
+    <title>空调房</title>
+    <updated>2019-10-04T11:14:05.806Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiangjinxinn.github.io"/>
     <link rel="self" href="https://jiangjinxinn.github.io/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
     <logo>https://jiangjinxinn.github.io/images/avatar.png</logo>
     <icon>https://jiangjinxinn.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2019, Gridea</rights>
+    <rights>All rights reserved 2019, 空调房</rights>
     <entry>
         <title type="html"><![CDATA[Spring Batch 迁移数据]]></title>
         <id>https://jiangjinxinn.github.io/post/spring-batch-qian-yi-shu-ju</id>
