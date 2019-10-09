@@ -2,13 +2,78 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiangjinxinn.github.io</id>
     <title>空调房</title>
-    <updated>2019-10-04T11:14:05.806Z</updated>
+    <updated>2019-10-09T16:32:20.095Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiangjinxinn.github.io"/>
     <link rel="self" href="https://jiangjinxinn.github.io/atom.xml"/>
     <logo>https://jiangjinxinn.github.io/images/avatar.png</logo>
     <icon>https://jiangjinxinn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2019, 空调房</rights>
+    <entry>
+        <title type="html"><![CDATA[雨中泪水独白（Tears in rain monologue）]]></title>
+        <id>https://jiangjinxinn.github.io/post/yu-zhong-lei-shui-du-bai-tears-in-rain-monologue</id>
+        <link href="https://jiangjinxinn.github.io/post/yu-zhong-lei-shui-du-bai-tears-in-rain-monologue">
+        </link>
+        <updated>2019-10-09T16:18:17.000Z</updated>
+        <content type="html"><![CDATA[<p>“	英语：I've seen things you people wouldn't believe. Attack ships on fire off the shoulder of Orion. I watched C-beams glitter in the dark near the Tannhäuser Gate. All those moments will be lost in time, like tears in rain. Time to die.	”</p>
+<p>（我曾见过令你们人类难以置信的事情。我看到过战舰在猎户座肩旁熊熊燃烧，也曾看到Ｃ射线在唐怀瑟之门旁的黑暗里闪耀。所有的那些时刻，都将消逝在时光中，一如泪水，消失在雨中。死亡的时刻到了。）</p>
+<p><a href="https://zh.wikipedia.org/wiki/%E9%9B%A8%E4%B8%AD%E6%B3%AA%E6%B0%B4%E7%8B%AC%E7%99%BD#cite_note-4">wikipedia</a></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Shading-JDBC]]></title>
+        <id>https://jiangjinxinn.github.io/post/shading-jdbc</id>
+        <link href="https://jiangjinxinn.github.io/post/shading-jdbc">
+        </link>
+        <updated>2019-10-06T13:42:56.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="流程">流程</h2>
+<p>做在 jdbc 层面上</p>
+<h2 id="分库分表策略">分库分表策略</h2>
+<ul>
+<li>垂直</li>
+<li>水平</li>
+<li>
+<ul>
+<li>绑定表</li>
+</ul>
+</li>
+</ul>
+<h2 id="分片">分片</h2>
+<h3 id="新增">新增</h3>
+<h2 id="行表达式">行表达式</h2>
+<p>实现动机：配置的简化与一体化<br>
+语法：使用 Groovy</p>
+<p>sql between 时会抛出异常<code>org.springframework.dao.InvalidDataAccessApiUsageException: Inline strategy cannot support range sharding.; nested exception is java.lang.IllegalStateException: Inline strategy cannot support range sharding.</code></p>
+<h2 id="分布式-id-生成">分布式 id 生成</h2>
+<h3 id="雪花算法默认">雪花算法（默认）</h3>
+<p><img src="https://jiangjinxinn.github.io/post-images/1570369804031.png" alt=""><br>
+Sharding-JDBC 中生成后插入数据库中。</p>
+<ol>
+<li>时钟回拨<br>
+服务器时钟回拨会导致产生重复序列，因此默认分布式主键生成器提供了一个最大容忍的时钟回拨毫秒 数。 如果时钟回拨的时间超过最大容忍的毫秒数阈值，则程序报错；如果在可容忍的范围内，默认分布式主键生成器会等待时钟同步到最后一次主键生成的时间后再继续工作。 最大容忍的时钟回拨毫秒数的默认值为0，可通过属性设置。<br>
+https://www.jianshu.com/p/98c202f64652</li>
+<li>worker id<br>
+重复 worker id 会产生相同的 id https://cloud.tencent.com/developer/article/1074907<br>
+worker id 如何配置？</li>
+<li>没有并发量的情况下的话，序列号位几乎都是 1，根据路由规则都会路由到一个表中</li>
+</ol>
+<h2 id="分布式事务">分布式事务</h2>
+<p>本地事务：ACID<br>
+分布式事务：BASE，通过业务逻辑将互斥操作从资源层面上移至业务层面。通过放宽对强一致性要求，来换取系统吞吐量的提升</p>
+<h3 id="xa">XA</h3>
+<p><img src="https://jiangjinxinn.github.io/post-images/1570501311460.png" alt=""><br>
+两阶段事务提交采用X/OPEN组织定义的DTP 模型，通过抽象出来的AP、TM、RM 的概念可以保证事务的强一致性。其中 TM 和 RM 之间采用 XA 协议进行双向通信。与传统的本地事务相比，XA 事务增加了 prepare 阶段，数据库除了被动接受提交指令以外，还可以反向通知调用方事务是否可以被提交。因此 TM可以收集各分支事务的prepare 结果，最后进行原子提交，保证事务的强一致性。<br>
+分为准备阶段和提交阶段。每个参与者要么发送失败，要么在本地执行事务，写本地的 redo、undo 日志，但不提交。协调者收到了参与者失败消息或者超时消息，直接给每个参与者发送回滚（rollback）消息，否则发送提交（commit）消息。<br>
+需要在多个节点之间进行协调，而各节点对锁资源的释放必须等到事务最终提交的时候。这样比起单阶段提交，会消耗更多时间。事务执行时间延长，意味着锁资源发生冲突的概率增加。</p>
+<h3 id="saga">Saga</h3>
+<p>多个短时事务组成的长时事务，在分布式场景下，我们把一个 Saga 分布式事务看做一个由多个本地事务组成的事务，每个事务都有一个与之对应的补偿事务。在 Saga 事务执行过程中，某一个出错后，Saga 事务会终止，同时会调用对应的补偿事务完成相关的恢复操作<br>
+自动反向补偿。Saga 定义了一个事务中的每个子事务都对应一个反向补偿操作。Saga 事务管理器会根据执行结果生成一张有向无环图，并在执行回滚的时候根据该图一次执行反向补偿操作。Saga 事务管理器只用于何时重试，何时补偿，不负责补偿的内容，补偿的具体操作由开发者自行提供。<br>
+Sharding-JDBC 采用了反向 sql 技术，将对数据库的更新操作的 sql 自动生成反向 sql，并交由 <a href="https://github.com/apache/servicecomb-saga-actuator">saga-actuator</a> 执行。</p>
+<h3 id="seate">Seate</h3>
+<p><a href="https://github.com/seata/seata">Seate</a><br>
+<a href="https://shardingsphere.apache.org/document/current/cn/features/transaction/principle/base-transaction-seata/">Sharding-JDBC 的实现原理</a>。整合Seata AT事务时，需要把TM，RM，TC的模型融入到ShardingSphere 分布式事务的SPI的生态中。在数据库资源上，Seata通过对接 DataSource 接口，让JDBC操作可以同 TC 进行 RPC 通信。同样，ShardingSphere 也是面向 DataSource 接口对用户配置的物理 DataSource 进行了聚合，因此把物理 DataSource 二次包装为 Seata 的 DataSource 后，就可以把 Seata AT 事务融入到 ShardingSphere 的分片中。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Spring Batch 迁移数据]]></title>
         <id>https://jiangjinxinn.github.io/post/spring-batch-qian-yi-shu-ju</id>
@@ -36,8 +101,10 @@ process<br>
 itemWriter</p>
 <p>一些问题:<br>
 不要把 jpa reader writer 注册为 bean，注销 bean 的时候会 close EntityManager 两遍（这个没深究，解决了问题我就溜了）</p>
-<p>restart, 默认失败的任务下次启动会，重新执行，根据 JobRepository 存储的信息进行<br>
-<code>org.springframework.batch.core.job.builder.JobBuilderHelper#preventRestart</code></p>
+<p>任务 restart<br>
+restart, 默认失败的任务下次启动会，重新执行，根据 JobRepository 存储的信息进行<br>
+可以通过<code>org.springframework.batch.core.job.builder.JobBuilderHelper#preventRestart</code>  进行关闭<br>
+也可以在<code>org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader#setSaveState</code> 对齐关闭</p>
 <p>任务会在 <code>BATCH_STEP_EXECUTION_CONTEXT</code>  表中添加记录执行记录，已 <code>JpaPagingItemReader</code> 为例，会记录当前已进行到的数目count<br>
 <code>{&quot;batch.taskletTypetaskletType&quot;:&quot;org.springframework.batch.core.step.item.ChunkOrientedTasklet&quot;,&quot;JpaPagingItemReader.read.count&quot;:428,&quot;batch.stepType&quot;:&quot;org.springframework.batch.core.step.tasklet.TaskletStep&quot;}</code><br>
 如果失败了，下次会从记录的数目处开始读取，失败 skip 掉的数据，也会被算到读取的数据上</p>

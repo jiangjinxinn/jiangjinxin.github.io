@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jiangjinxinn.github.io/favicon.ico?v=1570187642365">
+<link rel="shortcut icon" href="https://jiangjinxinn.github.io/favicon.ico?v=1570638734517">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiangjinxinn.github.io/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://jiangjinxinn.github.io">
-        <img class="avatar" src="https://jiangjinxinn.github.io/images/avatar.png?v=1570187642365" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://jiangjinxinn.github.io/images/avatar.png?v=1570638734517" alt="" width="32px" height="32px">
       </a>
       <a href="https://jiangjinxinn.github.io">
         <h1 class="site-title">空调房</h1>
@@ -107,8 +107,10 @@ process<br>
 itemWriter</p>
 <p>一些问题:<br>
 不要把 jpa reader writer 注册为 bean，注销 bean 的时候会 close EntityManager 两遍（这个没深究，解决了问题我就溜了）</p>
-<p>restart, 默认失败的任务下次启动会，重新执行，根据 JobRepository 存储的信息进行<br>
-<code>org.springframework.batch.core.job.builder.JobBuilderHelper#preventRestart</code></p>
+<p>任务 restart<br>
+restart, 默认失败的任务下次启动会，重新执行，根据 JobRepository 存储的信息进行<br>
+可以通过<code>org.springframework.batch.core.job.builder.JobBuilderHelper#preventRestart</code>  进行关闭<br>
+也可以在<code>org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader#setSaveState</code> 对齐关闭</p>
 <p>任务会在 <code>BATCH_STEP_EXECUTION_CONTEXT</code>  表中添加记录执行记录，已 <code>JpaPagingItemReader</code> 为例，会记录当前已进行到的数目count<br>
 <code>{&quot;batch.taskletTypetaskletType&quot;:&quot;org.springframework.batch.core.step.item.ChunkOrientedTasklet&quot;,&quot;JpaPagingItemReader.read.count&quot;:428,&quot;batch.stepType&quot;:&quot;org.springframework.batch.core.step.tasklet.TaskletStep&quot;}</code><br>
 如果失败了，下次会从记录的数目处开始读取，失败 skip 掉的数据，也会被算到读取的数据上</p>
