@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>面试（2019 年 10 月） | 空调房</title>
+<meta name="description" content="">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1572711466251">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jiangjinxinn.github.io//styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://jiangjinxinn.github.io/">
+        <img class="avatar" src="https://jiangjinxinn.github.io//images/avatar.png?v=1572711466251" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://jiangjinxinn.github.io/">
+        <h1 class="site-title">空调房</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">面试（2019 年 10 月）</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2019-11-02</span>
+            
+              <span>
+                <i class="icon-pricetags-outline"></i>
+                
+                  <a href="https://jiangjinxinn.github.io//tag/zSLEOgLaG">
+                    面试
+                    
+                  </a>
+                
+              </span>
+            
+          </div>
+          <div class="post-content">
+            <h2 id="we-公司">we 公司</h2>
+<p>10 月 18日</p>
+<p>现场面（合计hr 面 2 小时 15 分）</p>
+<p>面试官 1:</p>
+<ol>
+<li>问权限系统细节，权限有什么功能，怎么做的，请求量多少，RBCA 哪个层级</li>
+<li>问用户系统</li>
+<li>看过哪些源码？</li>
+<li>spring bean 生命周期</li>
+<li>假设一个类 A 如下，beanFactory 中有两个类型的 Car，beanId 为 carA，carB，下面类中中 Car能否注入成功， 如何让 car 的注入动态化</li>
+</ol>
+<pre><code>class A {
+    @Resource
+    private Car someCar;
+    
+    public someMethod(Car someCar) {
+        // sout
+    }
+}
+</code></pre>
+<ul>
+<li>如何实现一个 LRU 算法</li>
+<li>写下递归 n 的阶层</li>
+<li>java 中 juc 包下哪些锁是 cas 操作？</li>
+<li>synchronized 和可重入锁，JMM、volatile</li>
+<li>mysql 根据性别查询不同的用户怎么加索引</li>
+<li>mysql 索引</li>
+<li>浏览器地址栏输入网址后的过程</li>
+<li>聊了下设计模式</li>
+<li>聊了下分布式事务</li>
+<li>产品经理比较烂怎么办</li>
+</ul>
+<p>面试官 2：</p>
+<ul>
+<li>react 的生命周期</li>
+<li>webpack 用过没</li>
+<li>zookeeper 一致性原理了，核心是啥</li>
+<li>有没有高并发经验</li>
+<li>实现以下代码，模仿ConcurrentHashMap 的computeIfAbsent，但是要求同样的 key 和 mappingFunction同时请求的时候只计算一次，阻塞其他线程</li>
+</ul>
+<pre><code>public class ConcurrentHashMap {
+    public V computeIfAbsent(K key,
+            Function&lt;? super K, ? extends V&gt; mappingFunction) {
+        /**
+        /* 要求 mappingFunction 只计算一次，即同样 key、mappingFunction 
+        /* 调用的时候只计算一次,mappingFunction,阻塞另一个线程的调用
+        */
+    }
+}
+</code></pre>
+<h2 id="yz-公司">yz 公司：</h2>
+<p>电话面（约 30 分钟）</p>
+<ol>
+<li>聊权限系统表结构设计</li>
+<li>为什么要使用分库分表</li>
+<li>解释下一条 sql 在分库分表下是怎么查询的</li>
+<li>项目中 mq 用来干嘛的</li>
+<li>mq 消息发送失败怎么处理</li>
+<li>inodb 索引</li>
+<li>隔离级别</li>
+<li>mvcc，隔离级别怎么实现的</li>
+<li>讲下一致性视图</li>
+<li>行锁</li>
+</ol>
+<h2 id="dd-公司">dd 公司</h2>
+<p>电话面（约 1 小时 10 分）</p>
+<ol>
+<li>问用户系统架构，怎么设计的，问的非常细）</li>
+<li>用户系统和权限、登录架构、依赖关系</li>
+<li>
+<ol>
+<li>登录系统如何进行 用户权限资源 debug</li>
+<li>登录系统如何高可用</li>
+</ol>
+</li>
+<li>用户系统哪里做的不好、怎么把他做好，如何做到高可用</li>
+<li>权限系统哪里做的不好、怎么把他做好</li>
+<li>用户打分算法 bm5（听不清叫啥了）了解否</li>
+<li>并发量有多少，请求量多少</li>
+<li>微服务用的什么框架</li>
+<li>简历上的校验框架干嘛的，有什么难点</li>
+<li>介绍下 dubbo
+<ol>
+<li>dubbo 主要分层</li>
+<li>注册中心挂了还能调用吗</li>
+<li>讲述下服务端发起一次请求的过程</li>
+<li>序列化机制有哪些</li>
+<li>实现 dubbo 扩展机制 spi 要添加哪些类</li>
+<li>序列化实现了解吗，为什么选用 hessian</li>
+<li>负载均衡机制有哪些</li>
+<li>让你来设计一个 rpc 框架，如何设计</li>
+</ol>
+</li>
+<li>mysql 索引、mvcc</li>
+<li>并发相关</li>
+<li>
+<ol>
+<li>volatile 语义，使用场景、JMM<br>
+2. sychronized 原理、讲述下锁优化、锁膨胀<br>
+3. 可重入锁和读写锁<br>
+4. 线程池包下主要有哪些类，主要是怎么设计的<br>
+5. 线程池中的阻塞队列有哪些<br>
+6. ConcurrentHashMap</li>
+</ol>
+</li>
+<li>有没有碰到过 oom、sql 优化经验</li>
+<li>redis
+<ol>
+<li>事务了解吗</li>
+<li>管道操作了解吗</li>
+<li>有哪些数据结构</li>
+<li>集群</li>
+</ol>
+</li>
+<li>Spring Boot</li>
+<li>
+<ol>
+<li>讲述下你的理解，和 Spring 有哪些区别<br>
+2. 条件装配怎么实现的<br>
+3. 如何实现一个 SpringBoot Starter</li>
+</ol>
+</li>
+</ol>
+<h2 id="mk-公司">mk 公司</h2>
+<p>现场面（合计hr 面约 2 小时 30 分）</p>
+<p>面试官 1：</p>
+<ul>
+<li>Hashmap、ConcurrentHashMap
+<ul>
+<li>HashMap 并发环境下有什么问题</li>
+<li>为什么使用红黑树</li>
+<li>红黑树 crud 哪个操作最快</li>
+</ul>
+</li>
+<li>JVM 内存区
+<ul>
+<li>介绍下常量池</li>
+<li>堆中哪些对象可以作为 gc-roots</li>
+<li>讲述下类加载过程</li>
+</ul>
+</li>
+<li>Sychronized
+<ul>
+<li>讲一下锁膨胀如何实现</li>
+<li>JMM 内存模型</li>
+</ul>
+</li>
+<li>线程池参数
+<ul>
+<li>核心线程数与最大线程数的区别</li>
+<li>工作队列有哪几种</li>
+<li>核心线程数满了以后添加新任务如何处理的</li>
+<li>任务拒绝策略有哪些</li>
+</ul>
+</li>
+<li>BeanFactory 与 FactoryBean 的区别</li>
+<li>讲一下 mysql 索引
+<ul>
+<li>联合索引（A,B,C) 查询（B,C) 能否使用索引，为什么？</li>
+<li>讲一下mysql 索引使用需要注意的地方</li>
+<li>索引底层数据结构</li>
+<li>为什么使用 b+树</li>
+</ul>
+</li>
+<li>Dubbo 了解吗
+<ul>
+<li>负载均衡有哪些策略</li>
+<li>一致性 hash 原理</li>
+</ul>
+</li>
+<li>ThreadLocal 使用过吗
+<ul>
+<li>ThreadLocal 有什么问题？</li>
+<li>怎么实现的</li>
+</ul>
+</li>
+<li>Redis
+<ul>
+<li>String 数据结构是如何实现的</li>
+<li>讲下跳表</li>
+<li>备份策略</li>
+<li>主从同步</li>
+</ul>
+</li>
+</ul>
+<p>面试官 2：</p>
+<ul>
+<li>设计模式
+<ul>
+<li>设计模式有哪些原则</li>
+<li>策略模式</li>
+<li>模板方法</li>
+</ul>
+</li>
+<li>数据结构
+<ul>
+<li>遍历图有几种方式</li>
+</ul>
+</li>
+<li>有没有 oom 过</li>
+<li>老年代的对象的年龄都不大是什么原因？如何调优？</li>
+<li>面试官 1 问过线程池没😂</li>
+</ul>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://jiangjinxinn.github.io//post/nacos-fu-wu-shan-chu-shi-bai-de-wen-ti">
+              <h3 class="post-title">
+                下一篇：Nacos 服务删除失败的问题
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan"></div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jiangjinxinn.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

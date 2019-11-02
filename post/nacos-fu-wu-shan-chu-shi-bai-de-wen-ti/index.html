@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Nacos 服务删除失败的问题 | 空调房</title>
+<meta name="description" content="">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1572711466251">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jiangjinxinn.github.io//styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://jiangjinxinn.github.io/">
+        <img class="avatar" src="https://jiangjinxinn.github.io//images/avatar.png?v=1572711466251" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://jiangjinxinn.github.io/">
+        <h1 class="site-title">空调房</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Nacos 服务删除失败的问题</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2019-10-14</span>
+            
+          </div>
+          <div class="post-content">
+            <p>在使用 Nacos 作为服务监控的功能的时候出现了一个问题：<br>
+删除服务提示失败：<br>
+<img src="https://jiangjinxinn.github.io//post-images/1571033820491.png" alt=""></p>
+<p>提示是对应的服务不存在<br>
+但是实际上 nacos 的后台管理页面上是存在的，并且我的后台页面上还出现了两个同名的服务，其中一个可以删除成功，另一个会报服务不存在</p>
+<p>回忆了下我之前的操作，其中一次在注册服务实例的时候，在服务名后面带上了 <code>@@</code>，加这个原先是为了做服务区分用的，用<code>@@</code> 字符是因为我在 nacos 的源码中看到他们是用 group + <code>@@</code> + serviceName 作为 service 的标识的，想模仿一波，贴近风格。</p>
+<p>直接到代码中找原因，先找到抛出异常的地方<br>
+<code>com.alibaba.nacos.naming.core.ServiceManager#easyRemoveService</code></p>
+<pre><code>    public void easyRemoveService(String namespaceId, String serviceName) throws Exception {
+
+        Service service = getService(namespaceId, serviceName);
+        if (service == null) {
+            throw new IllegalArgumentException(&quot;specified service not exist, serviceName : &quot; + serviceName);
+        }
+
+        if (!service.allIPs().isEmpty()) {
+            throw new IllegalArgumentException(&quot;specified service has instances, serviceName : &quot; + serviceName);
+        }
+
+        consistencyService.remove(KeyBuilder.buildServiceMetaKey(namespaceId, serviceName));
+    }
+</code></pre>
+<p>获取 service 的方法在这个接口中<br>
+<code>com.alibaba.nacos.naming.core.ServiceManager#getService</code></p>
+<pre><code>    public Service getService(String namespaceId, String serviceName) {
+        if (serviceMap.get(namespaceId) == null) {
+            return null;
+        }
+        // 这里直接从 map 中查询 key 为serviceName 的 Service
+        return chooseServiceMap(namespaceId).get(serviceName);
+    }
+</code></pre>
+<p>可以看到就是到存储了 service 的 concurrentHashMap 中查询 service</p>
+<pre><code>    /**
+     * Map&lt;namespace, Map&lt;group::serviceName, Service&gt;&gt;
+     */
+    private Map&lt;String, Map&lt;String, Service&gt;&gt; serviceMap = new ConcurrentHashMap&lt;&gt;();
+</code></pre>
+<p>这里没有查询到，说明 serviceMap 没有存储了相应的键值对数据</p>
+<p>那控制后台的数据哪里来的呢？<br>
+<code>com.alibaba.nacos.naming.controllers.CatalogController#listDetail</code></p>
+<pre><code>  @RequestMapping(value = &quot;/services&quot;, method = RequestMethod.GET)
+    public Object listDetail(HttpServletRequest request) {
+
+        boolean withInstances = Boolean.parseBoolean(WebUtils.optional(request, &quot;withInstances&quot;, &quot;true&quot;));
+
+        if (withInstances) {
+            String namespaceId = WebUtils.optional(request, CommonParams.NAMESPACE_ID,
+                Constants.DEFAULT_NAMESPACE_ID);
+            List&lt;ServiceDetailInfo&gt; serviceDetailInfoList = new ArrayList&lt;&gt;();
+            int pageNo = Integer.parseInt(WebUtils.required(request, &quot;pageNo&quot;));
+            int pageSize = Integer.parseInt(WebUtils.required(request, &quot;pageSize&quot;));
+            String keyword = WebUtils.optional(request, &quot;keyword&quot;, StringUtils.EMPTY);
+
+            List&lt;Service&gt; serviceList = new ArrayList&lt;&gt;(8);
+            // 控制台上返回带数据来自这里，serviceList 传入serviceManager.getPagedService 方法中被填充了数据
+            // 说明这里返回了数据，往下看下
+            serviceManager.getPagedService(namespaceId, pageNo, pageSize, keyword, StringUtils.EMPTY, serviceList, false);
+
+            for (Service service : serviceList) {
+                ServiceDetailInfo serviceDetailInfo = new ServiceDetailInfo();
+                // 这里将 Service 的名字进行了转化，就是之前说的，serviceName 是 group + serviceName，这里要把 group 去掉
+                serviceDetailInfo.setServiceName(NamingUtils.getServiceName(service.getName()));
+                serviceDetailInfo.setGroupName(NamingUtils.getGroupName(service.getName()));
+                serviceDetailInfo.setMetadata(service.getMetadata());
+
+                Map&lt;String, ClusterInfo&gt; clusterInfoMap = getStringClusterInfoMap(service);
+                serviceDetailInfo.setClusterMap(clusterInfoMap);
+
+                serviceDetailInfoList.add(serviceDetailInfo);
+            }
+
+            return serviceDetailInfoList;
+        } else {
+            return serviceList(request);
+        }
+    }
+</code></pre>
+<pre><code>public class NamingUtils {
+
+    public static String getGroupedName(String serviceName, String groupName) {
+        return groupName + Constants.SERVICE_INFO_SPLITER + serviceName;
+    }
+
+    public static String getServiceName(String serviceNameWithGroup) {
+        if (!serviceNameWithGroup.contains(Constants.SERVICE_INFO_SPLITER)) {
+            return serviceNameWithGroup;
+        }
+        // public static final String SERVICE_INFO_SPLITER = &quot;@@&quot;;
+        // 这里直接加上将字符串分割，返回数据，所以如果你的服务的名字带有`@@`，`@@` 会被去掉
+        return serviceNameWithGroup.split(Constants.SERVICE_INFO_SPLITER)[1];
+    }
+
+    public static String getGroupName(String serviceNameWithGroup) {
+        if (!serviceNameWithGroup.contains(Constants.SERVICE_INFO_SPLITER)) {
+            return Constants.DEFAULT_GROUP;
+        }
+        return serviceNameWithGroup.split(Constants.SERVICE_INFO_SPLITER)[0];
+    }
+}
+</code></pre>
+<p><code>com.alibaba.nacos.naming.core.ServiceManager</code> 中的存入 service 信息接口</p>
+<pre><code>    public void putService(Service service) {
+        if (!serviceMap.containsKey(service.getNamespaceId())) {
+            synchronized (putServiceLock) {
+                if (!serviceMap.containsKey(service.getNamespaceId())) {
+                    serviceMap.put(service.getNamespaceId(), new ConcurrentHashMap&lt;&gt;(16));
+                }
+            }
+        }
+        // 可以看到存入 service 的时候，名字没有做处理
+        serviceMap.get(service.getNamespaceId()).put(service.getName(), service);
+    }
+</code></pre>
+<p>这里找到原因，原因就是，我之前测试的时候，出于一些原因再服务的 name 注册的时候<br>
+<code>com.alibaba.nacos.api.naming.NamingService#registerInstance(java.lang.String, com.alibaba.nacos.api.naming.pojo.Instance)</code><br>
+注册的服务的名字后面带上了<code>@@</code>，前台展示的时候，<code>@@</code> 由于字符串被去掉了，但是 nacos 上存取服务实例的 map 中的名称中实际上带有我添加的 <code>@@</code>，删除的时候就失败了，因为查找不到</p>
+<p>🐸由于我后面测试的时候，注册的时候将<code>@@</code> 去掉了，所以看到注册的实例名字没有带<code>@@</code> 也没有察觉到不对</p>
+<p>为什么 nacos 在返回 service 的时候要将<code>@@</code> 去掉，由前所述因为 group 和 serviceName 合在一个字符串里了</p>
+<p>随后查看了下 nacos 中是有做字符检测的，但是正则写的有问题。。</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://jiangjinxinn.github.io//post/yu-zhong-lei-shui-du-bai-tears-in-rain-monologue">
+              <h3 class="post-title">
+                下一篇：雨中泪水独白（Tears in rain monologue）
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan"></div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://jiangjinxinn.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
