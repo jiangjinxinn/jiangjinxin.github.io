@@ -2,13 +2,79 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiangjinxinn.github.io/</id>
     <title>空调房</title>
-    <updated>2019-11-02T16:19:58.131Z</updated>
+    <updated>2019-11-06T14:07:30.821Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiangjinxinn.github.io/"/>
     <link rel="self" href="https://jiangjinxinn.github.io//atom.xml"/>
     <logo>https://jiangjinxinn.github.io//images/avatar.png</logo>
     <icon>https://jiangjinxinn.github.io//favicon.ico</icon>
     <rights>All rights reserved 2019, 空调房</rights>
+    <entry>
+        <title type="html"><![CDATA[Stream 生成勾股数]]></title>
+        <id>https://jiangjinxinn.github.io//post/stream-sheng-cheng-gou-gu-shu</id>
+        <link href="https://jiangjinxinn.github.io//post/stream-sheng-cheng-gou-gu-shu">
+        </link>
+        <updated>2019-11-06T14:01:33.000Z</updated>
+        <content type="html"><![CDATA[<p>突然想起去年看的《java8 实战》上的用 Stream 生成勾股数的例子。这里试一下。<br>
+关键在于 flatMap 和生成先进行过滤再生成数组，虽然计算了两次开方，但是生成数组的开销更大。</p>
+<pre><code class="language-java">import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+class Scratch {
+    public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+        Stream&lt;int[]&gt; pythagoreanTriple = IntStream.rangeClosed(1, 100).boxed()
+                .flatMap(a -&gt; IntStream.rangeClosed(a, 100)
+                        .filter(b -&gt; Math.sqrt(a * a + b * b) % 1 == 0)
+                        .mapToObj(b -&gt; new int[]{a, b, (int) Math.sqrt(a * a + b * b)}));
+
+        pythagoreanTriple.limit(10).forEach(t -&gt; System.out.println(t[0] + &quot; &quot; + t[1] + &quot; &quot; + t[2]));
+        long end = System.currentTimeMillis();
+        System.out.println(&quot;total time: &quot; + (end - start) + &quot;\n&quot;);
+
+
+        long start2 = System.currentTimeMillis();
+        Stream&lt;int[]&gt; pythagoreanTriple2 = IntStream.rangeClosed(1, 100).boxed()
+                .flatMap(a -&gt; IntStream.rangeClosed(a, 100)
+                        .mapToObj(b -&gt; new int[]{a, b, (int) Math.sqrt(a * a + b * b)}))
+                        .filter(t -&gt; Math.sqrt(t[2]) % 1 == 0);
+
+        pythagoreanTriple2.limit(10).forEach(t -&gt; System.out.println(t[0] + &quot; &quot; + t[1] + &quot; &quot; + t[2]));
+        long end2 = System.currentTimeMillis();
+        System.out.println(&quot;total time 2: &quot; + (end2 - start2) + &quot;\n&quot;);
+    }
+}
+</code></pre>
+<p>运行的结果</p>
+<pre><code>3 4 5
+5 12 13
+6 8 10
+7 24 25
+8 15 17
+9 12 15
+9 40 41
+10 24 26
+11 60 61
+12 16 20
+total time: 91
+
+1 1 1
+1 4 4
+1 9 9
+1 16 16
+1 25 25
+1 36 36
+1 49 49
+1 64 64
+1 81 81
+1 100 100
+total time 2: 3
+
+
+Process finished with exit code 0
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[leetcode-cn.com ui 修改]]></title>
         <id>https://jiangjinxinn.github.io//post/leetcode-cncom-ui-xiu-gai</id>

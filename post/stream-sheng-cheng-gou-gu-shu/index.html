@@ -5,7 +5,7 @@
     
 <meta charset="utf-8" >
 
-<title>雨中泪水独白（Tears in rain monologue） | 空调房</title>
+<title>Stream 生成勾股数 | 空调房</title>
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -80,24 +80,79 @@
       <div class="content-container">
         <div class="post-detail">
           
-          <h2 class="post-title">雨中泪水独白（Tears in rain monologue）</h2>
+          <h2 class="post-title">Stream 生成勾股数</h2>
           <div class="post-info post-detail-info">
-            <span><i class="icon-calendar-outline"></i> 2019-10-10</span>
+            <span><i class="icon-calendar-outline"></i> 2019-11-06</span>
             
           </div>
           <div class="post-content">
-            <p>“	英语：I've seen things you people wouldn't believe. Attack ships on fire off the shoulder of Orion. I watched C-beams glitter in the dark near the Tannhäuser Gate. All those moments will be lost in time, like tears in rain. Time to die.	”</p>
-<p>（我曾见过令你们人类难以置信的事情。我看到过战舰在猎户座肩旁熊熊燃烧，也曾看到Ｃ射线在唐怀瑟之门旁的黑暗里闪耀。所有的那些时刻，都将消逝在时光中，一如泪水，消失在雨中。死亡的时刻到了。）</p>
-<p><a href="https://zh.wikipedia.org/wiki/%E9%9B%A8%E4%B8%AD%E6%B3%AA%E6%B0%B4%E7%8B%AC%E7%99%BD#cite_note-4">wikipedia</a></p>
+            <p>突然想起去年看的《java8 实战》上的用 Stream 生成勾股数的例子。这里试一下。<br>
+关键在于 flatMap 和生成先进行过滤再生成数组，虽然计算了两次开方，但是生成数组的开销更大。</p>
+<pre><code class="language-java">import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+class Scratch {
+    public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+        Stream&lt;int[]&gt; pythagoreanTriple = IntStream.rangeClosed(1, 100).boxed()
+                .flatMap(a -&gt; IntStream.rangeClosed(a, 100)
+                        .filter(b -&gt; Math.sqrt(a * a + b * b) % 1 == 0)
+                        .mapToObj(b -&gt; new int[]{a, b, (int) Math.sqrt(a * a + b * b)}));
+
+        pythagoreanTriple.limit(10).forEach(t -&gt; System.out.println(t[0] + &quot; &quot; + t[1] + &quot; &quot; + t[2]));
+        long end = System.currentTimeMillis();
+        System.out.println(&quot;total time: &quot; + (end - start) + &quot;\n&quot;);
+
+
+        long start2 = System.currentTimeMillis();
+        Stream&lt;int[]&gt; pythagoreanTriple2 = IntStream.rangeClosed(1, 100).boxed()
+                .flatMap(a -&gt; IntStream.rangeClosed(a, 100)
+                        .mapToObj(b -&gt; new int[]{a, b, (int) Math.sqrt(a * a + b * b)}))
+                        .filter(t -&gt; Math.sqrt(t[2]) % 1 == 0);
+
+        pythagoreanTriple2.limit(10).forEach(t -&gt; System.out.println(t[0] + &quot; &quot; + t[1] + &quot; &quot; + t[2]));
+        long end2 = System.currentTimeMillis();
+        System.out.println(&quot;total time 2: &quot; + (end2 - start2) + &quot;\n&quot;);
+    }
+}
+</code></pre>
+<p>运行的结果</p>
+<pre><code>3 4 5
+5 12 13
+6 8 10
+7 24 25
+8 15 17
+9 12 15
+9 40 41
+10 24 26
+11 60 61
+12 16 20
+total time: 91
+
+1 1 1
+1 4 4
+1 9 9
+1 16 16
+1 25 25
+1 36 36
+1 49 49
+1 64 64
+1 81 81
+1 100 100
+total time 2: 3
+
+
+Process finished with exit code 0
+</code></pre>
 
           </div>
         </div>
 
         
           <div class="next-post">
-            <a class="purple-link" href="https://jiangjinxinn.github.io//post/shading-jdbc">
+            <a class="purple-link" href="https://jiangjinxinn.github.io//post/leetcode-cncom-ui-xiu-gai">
               <h3 class="post-title">
-                下一篇：Shading-JDBC
+                下一篇：leetcode-cn.com ui 修改
               </h3>
             </a>
           </div>
