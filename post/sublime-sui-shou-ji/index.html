@@ -1,9 +1,11 @@
+
+<!DOCTYPE html>
 <html>
   <head>
     
 <meta charset="utf-8" >
 
-<title>空调房</title>
+<title>Sublime 随手记 | 空调房</title>
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -75,19 +77,50 @@
 </transition>
 
 
-        <div class="content-container">
+      <div class="content-container">
+        <div class="post-detail">
           
-          <div class="tags-container">
-            
-              <a class="tag" href="https://jiangjinxinn.github.io//tag/zSLEOgLaG">面试</a>
-            
-              <a class="tag" href="https://jiangjinxinn.github.io//tag/gridea">Gridea</a>
+          <h2 class="post-title">Sublime 随手记</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2019-12-08</span>
             
           </div>
+          <div class="post-content">
+            <p>平时有一种场景就是需要临时复制一些文本，进行对比或者查看，一般这时候我会使用 Sublime，但是 Sublime 在关闭文件的时候回提示你保存，日积月累下来就有点烦了。由于我不会在 Sublime 进行代码的处理和文档的编写，所以找下办法把 Sublime 改成草稿纸。</p>
+<figure data-type="image" tabindex="1"><img src="https://jiangjinxinn.github.io//post-images/1575792658471.jpg" alt=""></figure>
+<hr>
+<p>相关插件搜了一伙儿没有发现，到 Stack Overflow 上搜了下，找到了</p>
+<p><a href="https://stackoverflow.com/questions/24663013/sublime-text-prompt-to-save-file">sublimetext2 - Sublime Text Prompt to Save File - Stack Overflow</a></p>
+<p><a href="https://forum.sublimetext.com/t/request-dont-prompt-to-save-empty-untitled-tabs/685">Request: Don’t prompt to save empty “untitled” tabs - Ideas and Feature Requests - Sublime Forum</a></p>
+<hr>
+<p>用了下，很好，很满意，文章中有个地方要改下</p>
+<pre><code class="language-python">class SetNewScratchBuffer(sublime_plugin.EventListener):
+    def on_new(self, view):
+        view.set_scratch(True)
 
+    def on__save(self, view):
+        view.set_scratch(False)
+</code></pre>
+<p><code>on_save</code> 需要改成 <code>on_pre_save</code> <a href="http://www.sublimetext.com/docs/3/api_reference.html#sublime_plugin.EventListener">Sublime API Reference</a></p>
+<p>还有个 bug，进程退出启动 Sublime 在默认的 untitled 文件上不会不会生效，不退出进程不会有这个问题，不知道是否是 Sublime 的 bug。</p>
+
+          </div>
         </div>
 
-        <div class="site-footer">
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://jiangjinxinn.github.io//post/stream-sheng-cheng-gou-gu-shu">
+              <h3 class="post-title">
+                下一篇：Stream 生成勾股数
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
   <div class="slogan"></div>
   <div class="social-container">
     
@@ -106,8 +139,8 @@
 </div>
 
 
-      </div>
-      <script type="application/javascript">
+    </div>
+    <script type="application/javascript">
 
 hljs.initHighlightingOnLoad()
 
@@ -123,6 +156,5 @@ var app = new Vue({
 
 
 
-    </div>
   </body>
 </html>

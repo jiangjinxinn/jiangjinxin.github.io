@@ -2,13 +2,38 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiangjinxinn.github.io/</id>
     <title>空调房</title>
-    <updated>2019-11-06T14:07:30.821Z</updated>
+    <updated>2019-12-08T08:38:30.284Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiangjinxinn.github.io/"/>
     <link rel="self" href="https://jiangjinxinn.github.io//atom.xml"/>
     <logo>https://jiangjinxinn.github.io//images/avatar.png</logo>
     <icon>https://jiangjinxinn.github.io//favicon.ico</icon>
     <rights>All rights reserved 2019, 空调房</rights>
+    <entry>
+        <title type="html"><![CDATA[Sublime 随手记]]></title>
+        <id>https://jiangjinxinn.github.io//post/sublime-sui-shou-ji</id>
+        <link href="https://jiangjinxinn.github.io//post/sublime-sui-shou-ji">
+        </link>
+        <updated>2019-12-08T08:05:25.000Z</updated>
+        <content type="html"><![CDATA[<p>平时有一种场景就是需要临时复制一些文本，进行对比或者查看，一般这时候我会使用 Sublime，但是 Sublime 在关闭文件的时候回提示你保存，日积月累下来就有点烦了。由于我不会在 Sublime 进行代码的处理和文档的编写，所以找下办法把 Sublime 改成草稿纸。</p>
+<figure data-type="image" tabindex="1"><img src="https://jiangjinxinn.github.io//post-images/1575792658471.jpg" alt=""></figure>
+<hr>
+<p>相关插件搜了一伙儿没有发现，到 Stack Overflow 上搜了下，找到了</p>
+<p><a href="https://stackoverflow.com/questions/24663013/sublime-text-prompt-to-save-file">sublimetext2 - Sublime Text Prompt to Save File - Stack Overflow</a></p>
+<p><a href="https://forum.sublimetext.com/t/request-dont-prompt-to-save-empty-untitled-tabs/685">Request: Don’t prompt to save empty “untitled” tabs - Ideas and Feature Requests - Sublime Forum</a></p>
+<hr>
+<p>用了下，很好，很满意，文章中有个地方要改下</p>
+<pre><code class="language-python">class SetNewScratchBuffer(sublime_plugin.EventListener):
+    def on_new(self, view):
+        view.set_scratch(True)
+
+    def on__save(self, view):
+        view.set_scratch(False)
+</code></pre>
+<p><code>on_save</code> 需要改成 <code>on_pre_save</code> <a href="http://www.sublimetext.com/docs/3/api_reference.html#sublime_plugin.EventListener">Sublime API Reference</a></p>
+<p>还有个 bug，进程退出启动 Sublime 在默认的 untitled 文件上不会不会生效，不退出进程不会有这个问题，不知道是否是 Sublime 的 bug。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Stream 生成勾股数]]></title>
         <id>https://jiangjinxinn.github.io//post/stream-sheng-cheng-gou-gu-shu</id>
