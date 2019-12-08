@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1575794305187">
+<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1575794481717">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiangjinxinn.github.io//styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="site-header">
     <div class="left">
       <a href="https://jiangjinxinn.github.io/">
-        <img class="avatar" src="https://jiangjinxinn.github.io//images/avatar.png?v=1575794305187" alt="" width="32px" height="32px">
+        <img class="avatar" src="https://jiangjinxinn.github.io//images/avatar.png?v=1575794481717" alt="" width="32px" height="32px">
       </a>
       <a href="https://jiangjinxinn.github.io/">
         <h1 class="site-title">空调房</h1>
@@ -86,14 +86,15 @@
             
           </div>
           <div class="post-content">
-            <p>平时有一种场景就是需要临时复制一些文本，进行对比或者查看，一般这时候我会使用 Sublime，但是 Sublime 在关闭文件的时候回提示你保存，日积月累下来就有点烦了。由于我不会在 Sublime 进行代码的处理和文档的编写，所以找下办法把 Sublime 改成草稿纸。</p>
+            <p>平时有一种场景就是需要临时复制一些文本，进行对比或者查看，一般这时候我会使用 Sublime，但是 Sublime 在关闭文件的时候会提示你保存，日积月累下来就有点烦了。由于我不会在 Sublime 进行代码的处理和文档的编写，所以找下办法把 Sublime 改成草稿纸。</p>
 <figure data-type="image" tabindex="1"><img src="https://jiangjinxinn.github.io//post-images/1575792658471.jpg" alt=""></figure>
 <hr>
 <p>相关插件搜了一伙儿没有发现，到 Stack Overflow 上搜了下，找到了</p>
 <p><a href="https://stackoverflow.com/questions/24663013/sublime-text-prompt-to-save-file">sublimetext2 - Sublime Text Prompt to Save File - Stack Overflow</a></p>
 <p><a href="https://forum.sublimetext.com/t/request-dont-prompt-to-save-empty-untitled-tabs/685">Request: Don’t prompt to save empty “untitled” tabs - Ideas and Feature Requests - Sublime Forum</a></p>
 <hr>
-<p>用了下，很好，很满意，文章中有个地方要改下</p>
+<p>用了下，很好，很满意，新创建的文档会被标记为草稿文件，修改后不会提示保存。修改已存在的文件仍然还有提示保存。</p>
+<p>Stack Overflow 上的代码有个地方要改下</p>
 <pre><code class="language-python">class SetNewScratchBuffer(sublime_plugin.EventListener):
     def on_new(self, view):
         view.set_scratch(True)
@@ -101,8 +102,8 @@
     def on__save(self, view):
         view.set_scratch(False)
 </code></pre>
-<p><code>on_save</code> 需要改成 <code>on_pre_save</code> <a href="http://www.sublimetext.com/docs/3/api_reference.html#sublime_plugin.EventListener">Sublime API Reference</a></p>
-<p>还有个 bug，进程退出启动 Sublime 在默认的 untitled 文件上不会不会生效，不退出进程不会有这个问题，不知道是否是 Sublime 的 bug。</p>
+<p><code>on_save</code> 需要改成 <code>on_pre_save</code>。在 <a href="http://www.sublimetext.com/docs/3/api_reference.html#sublime_plugin.EventListener">Sublime API Reference</a> 没有看到 <code>on_save</code> 的信息。</p>
+<p>还有个 bug，进程退出启动 Sublime 在默认的 untitled 文件上不会生效，但是不退出进程的话不会有这个问题，不知道是否是 Sublime 的 bug。</p>
 
           </div>
         </div>
