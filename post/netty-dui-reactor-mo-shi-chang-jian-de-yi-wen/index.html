@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Netty 对 Reactor 模式常见的疑问 | 空调房</title>
+<meta name="description" content="">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1576423270698">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jiangjinxinn.github.io//styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://jiangjinxinn.github.io/">
+        <img class="avatar" src="https://jiangjinxinn.github.io//images/avatar.png?v=1576423270698" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://jiangjinxinn.github.io/">
+        <h1 class="site-title">空调房</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Netty 对 Reactor 模式常见的疑问</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2019-12-15</span>
+            
+          </div>
+          <div class="post-content">
+            <h2 id="netty-如何支持主从-reactor-模式">Netty 如何支持主从 Reactor 模式</h2>
+<p>简单来说就是将 两种 channel 注册到两种 EventLoopGroup上。<br>
+主要的逻辑在 引导类 <code>ServerBootstrap</code> 的 group() 中配置了 BossGroup 和 WorkGroup，会在后面 register() 完成初始化操作。</p>
+<p>group() 方法: <code>io.netty.bootstrap.ServerBootstrap#group(io.netty.channel.EventLoopGroup, io.netty.channel.EventLoopGroup)</code></p>
+<pre><code class="language-java">    /**
+     * Specify the {@link EventLoopGroup} which is used for the parent (acceptor) and the child (client).
+     */
+    @Override
+    public ServerBootstrap group(EventLoopGroup group) {
+        // ① 非主从的 Reactor 模式，一个 group 干两个活
+        return group(group, group);
+    }
+
+    /**
+     * Set the {@link EventLoopGroup} for the parent (acceptor) and the child (client). These
+     * {@link EventLoopGroup}'s are used to handle all the events and IO for {@link ServerChannel} and
+     * {@link Channel}'s.
+     */
+    public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup) {
+        // ② 设置 parentGroup 就是我们常说的 boss group 
+        super.group(parentGroup);
+        if (childGroup == null) {
+            throw new NullPointerException(&quot;childGroup&quot;);
+        }
+        if (this.childGroup != null) {
+            throw new IllegalStateException(&quot;childGroup set already&quot;);
+        }
+        // ③ 设置 childGroup 就是我们常说的 worker group
+        this.childGroup = childGroup;
+        return this;
+    }
+</code></pre>
+<p>先看下步骤 ② 设置了 parentGroup 后的动作。<br>
+在 <code>io.netty.bootstrap.AbstractBootstrap#initAndRegister</code> 初始化中会将后面的 <code>ServerSocketChannel</code> 注册到 parent gorup 上。</p>
+<pre><code class="language-java">    final ChannelFuture initAndRegister() {
+        Channel channel = null;
+        try {
+            channel = channelFactory.newChannel();
+            // ✅child group在这里初始化
+            init(channel);
+        } catch (Throwable t) {
+            if (channel != null) {
+                // channel can be null if newChannel crashed (eg SocketException(&quot;too many open files&quot;))
+                channel.unsafe().closeForcibly();
+            }
+            // as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor
+            return new DefaultChannelPromise(channel, GlobalEventExecutor.INSTANCE).setFailure(t);
+        }
+        // ✅ ServerSocketChannel 在这里注册到 parent group 上
+        ChannelFuture regFuture = config().group().register(channel);
+        if (regFuture.cause() != null) {
+            if (channel.isRegistered()) {
+                channel.close();
+            } else {
+                channel.unsafe().closeForcibly();
+            }
+        }
+        return regFuture;
+    }
+</code></pre>
+<p>接着来看下步骤 ③ 中设置 childGroup 后的操作，如上面贴的代码可以看到在<code>io.netty.bootstrap.AbstractBootstrap#initAndRegister</code> 同时也初始化了 childGroup 的操作</p>
+<pre><code class="language-java">    void init(Channel channel) throws Exception {
+        final Map&lt;ChannelOption&lt;?&gt;, Object&gt; options = options0();
+        synchronized (options) {
+            setChannelOptions(channel, options, logger);
+        }
+
+        final Map&lt;AttributeKey&lt;?&gt;, Object&gt; attrs = attrs0();
+        synchronized (attrs) {
+            for (Entry&lt;AttributeKey&lt;?&gt;, Object&gt; e: attrs.entrySet()) {
+                @SuppressWarnings(&quot;unchecked&quot;)
+                AttributeKey&lt;Object&gt; key = (AttributeKey&lt;Object&gt;) e.getKey();
+                channel.attr(key).set(e.getValue());
+            }
+        }
+
+        ChannelPipeline p = channel.pipeline();
+        // ① childGroup 换了一个名字
+        final EventLoopGroup currentChildGroup = childGroup;
+        final ChannelHandler currentChildHandler = childHandler;
+        final Entry&lt;ChannelOption&lt;?&gt;, Object&gt;[] currentChildOptions;
+        final Entry&lt;AttributeKey&lt;?&gt;, Object&gt;[] currentChildAttrs;
+        synchronized (childOptions) {
+            currentChildOptions = childOptions.entrySet().toArray(newOptionArray(childOptions.size()));
+        }
+        synchronized (childAttrs) {
+            currentChildAttrs = childAttrs.entrySet().toArray(newAttrArray(childAttrs.size()));
+        }
+
+        p.addLast(new ChannelInitializer&lt;Channel&gt;() {
+            @Override
+            public void initChannel(final Channel ch) throws Exception {
+                final ChannelPipeline pipeline = ch.pipeline();
+                ChannelHandler handler = config.handler();
+                if (handler != null) {
+                    pipeline.addLast(handler);
+                }
+
+                ch.eventLoop().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        // ② 传递给 ServerBootstrapAcceptor
+                        pipeline.addLast(new ServerBootstrapAcceptor(
+                                ch, currentChildGroup, currentChildHandler, currentChildOptions, currentChildAttrs));
+                    }
+                });
+            }
+        });
+</code></pre>
+<p>在 ② 中将 childGroup 传递给了 <code>ServerBootstrapAcceptor</code>， 他其实是个 <code>io.netty.channel.ChannelInboundHandlerAdapter</code>，在他的重写方法<code>io.netty.bootstrap.ServerBootstrap.ServerBootstrapAcceptor#channelRead</code>中将后续收到的 <code>SocketChannel</code> 注册到 childGroup 上</p>
+<pre><code>        @Override
+        @SuppressWarnings(&quot;unchecked&quot;)
+        public void channelRead(ChannelHandlerContext ctx, Object msg) {
+            // ① 这个 msg 就是 SocketChannel
+            final Channel child = (Channel) msg;
+
+            child.pipeline().addLast(childHandler);
+
+            setChannelOptions(child, childOptions, logger);
+
+            for (Entry&lt;AttributeKey&lt;?&gt;, Object&gt; e: childAttrs) {
+                child.attr((AttributeKey&lt;Object&gt;) e.getKey()).set(e.getValue());
+            }
+
+            try {
+                // 注册到 childGroup 上
+                childGroup.register(child).addListener(new ChannelFutureListener() {
+                    @Override
+                    public void operationComplete(ChannelFuture future) throws Exception {
+                        if (!future.isSuccess()) {
+                            forceClose(child, future.cause());
+                        }
+                    }
+                });
+            } catch (Throwable t) {
+                forceClose(child, t);
+            }
+        }
+</code></pre>
+<h2 id="为什么说-netty-的-main-reactor-大多并不能用到一个线程组只能线程组里面的一个">为什么说 Netty 的 main reactor 大多并不能用到一个线程组，只能线程组里面的一个</h2>
+<p>因为大多只绑定一个地址<br>
+io.netty.bootstrap.AbstractBootstrap#doBind</p>
+<h2 id="netty-给-channel-分配-nio-event-loop-的规则是什么">Netty 给 Channel 分配 NIO event loop 的规则是什么</h2>
+<p>对于 NIO 的 EventLoopGroup 的实现是<code>io.netty.channel.MultithreadEventLoopGroup#register(io.netty.channel.Channel)</code></p>
+<pre><code class="language-java">    @Override
+    public ChannelFuture register(Channel channel) {
+        // 这里的 next() 是个选择器，选择一个 EventExecutor
+        return next().register(channel);
+    }
+    ```
+最后是在 `EventExecutorChooserFactory` 的策略模式中选择一个 `EventExecutor`，
+```java
+/**
+ * Factory that creates new {@link EventExecutorChooser}s.
+ */
+@UnstableApi
+public interface EventExecutorChooserFactory {
+
+    /**
+     * Returns a new {@link EventExecutorChooser}.
+     */
+    EventExecutorChooser newChooser(EventExecutor[] executors);
+
+    /**
+     * Chooses the next {@link EventExecutor} to use.
+     */
+    @UnstableApi
+    interface EventExecutorChooser {
+
+        /**
+         * Returns the new {@link EventExecutor} to use.
+         */
+        EventExecutor next();
+    }
+}
+</code></pre>
+<p>有两个实现类一个是<code>GenericEventExecutorChooser</code>，另一个是<code>PowerOfTwoEventExecutorChooser</code>，区别在于选择一下个<code>EventExecutor</code>时候，如果是2的幂次，可以直接按为与&amp;操作，高效一点。</p>
+<h2 id="同用模式的-netty-如何实现多路复用器跨平台的">同用模式的 Netty 如何实现多路复用器跨平台的</h2>
+<p>Netty 的 NIO Selector 封装在 <code>io.netty.channel.nio.NioEventLoopGroup</code> 中</p>
+<pre><code class="language-java">    public NioEventLoopGroup(int nThreads, Executor executor) {
+        this(nThreads, executor, SelectorProvider.provider());
+    }
+</code></pre>
+<p>通过 <code>SelectorProvider.provider()</code> 获取相应的Selector。</p>
+<pre><code class="language-java">    public static SelectorProvider provider() {
+        synchronized (lock) {
+            if (provider != null)
+                return provider;
+            return AccessController.doPrivileged(
+                new PrivilegedAction&lt;SelectorProvider&gt;() {
+                    public SelectorProvider run() {
+                            // ① 从系统参数从获取 nio selector 的 spi 实现
+                            if (loadProviderFromProperty())
+                                return provider;
+                            // ② 通过 java spi 加载
+                            if (loadProviderAsService())
+                                return provider;
+                            // ③ jdk 实现
+                            provider = sun.nio.ch.DefaultSelectorProvider.create();
+                            return provider;
+                        }
+                    });
+        }
+    }
+</code></pre>
+<p>可以看到，nio 的 selector 获取有三种途径，一般最后就是 sun 的 jdk 中的实现。在 mac 中是 <code>KQueueSelectorProvider</code>。</p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://jiangjinxinn.github.io//post/sublime-sui-shou-ji">
+              <h3 class="post-title">
+                下一篇：Sublime 随手记
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan"></div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Made with 🐸by jiangjinxin | <a class="rss" href="https://jiangjinxinn.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
