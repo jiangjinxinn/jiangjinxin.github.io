@@ -2,13 +2,34 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiangjinxinn.github.io/</id>
     <title>空调房</title>
-    <updated>2020-01-25T06:58:04.036Z</updated>
+    <updated>2020-01-25T07:33:39.723Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiangjinxinn.github.io/"/>
     <link rel="self" href="https://jiangjinxinn.github.io//atom.xml"/>
     <logo>https://jiangjinxinn.github.io//images/avatar.png</logo>
     <icon>https://jiangjinxinn.github.io//favicon.ico</icon>
     <rights>All rights reserved 2020, 空调房</rights>
+    <entry>
+        <title type="html"><![CDATA[# 2019]]></title>
+        <id>https://jiangjinxinn.github.io//post/2019</id>
+        <link href="https://jiangjinxinn.github.io//post/2019">
+        </link>
+        <updated>2020-01-25T07:33:16.000Z</updated>
+        <content type="html"><![CDATA[<p>网上看了些年终总结，大多数还是打广告性质的，讲述下自己这一年干了啥，作为论述下自己很牛逼的证据，确实，一眼看下来除了牛逼，嘴巴还要惊讶的被大张开来，暗暗和自己对比了下，咋人与人之间差距这么大呢。</p>
+<p>我在以前看到自己写的旧笔记，日记时都会想删掉，心里还要疑问下，这个傻逼是我？慢慢的感觉到时间飞逝，留下来一些记录也挺有意思的，菜的自己也是自己呢，所以有了这篇总结呢。</p>
+<hr>
+<p>想来从 2018 年 6 月毕业至今马上就要工作两年了，和每次回想以前的事一样，都会感叹时间过的之快。</p>
+<p>感觉现在技术水平算是入了个门吧，从刚开始来公司的时候，idea 用不来，上网查教程到现在上网查看面试题，学习的过程就是这个样子吧。</p>
+<p>第一次看到组长代码里用 BeanUtils 的 copyProperties 方法，第一次看到同事用 ApplicationContextAware 时候的惊讶，看到同事封装 react 写个类的时候，看到公司内部使用的框架是主管写的时候，我小小的内心都被震撼了。有一次听到隔壁组的同事说分布式锁的时候，真的是浑身抖擞了一下，太牛逼了，心里不断的发出感叹。</p>
+<p>然后就是稳步进行中的搬砖事业，被 react 前端吊打的过程，从 java 基础开始恶补知识。</p>
+<p>印象更深的就是今年年中的时候组里来了个实习生，想下同期的自己在干啥，更加感觉自己还是太菜了，还要加把劲，总又感觉有点奇怪，算来也 25 岁了，咋还要每天学习。。</p>
+<p>年中以后换了个组，开始写点超出我水平的代码，写都写不来，只能去抄代码。。从看 nacos 代码时候被代码里的心跳代码惊艳了，顿时感觉之前不知道在干啥，憨憨的一样。好在虽然超时了，组长也只能背后低估下超时了超时了，也不会说啥。。</p>
+<p>慢慢心里感觉公司 low 的感觉越来越强烈，code review 都没有啊，还要老是强调代码规范，同事maven 打个 jar 包老是翻车坑我，公司的文化也越来越熟悉，熟悉后有点失望。</p>
+<p>这一年绩效也不好看，心态时常爆炸。好在现在能稳的住了。</p>
+<hr>
+<p>我觉得我还是幸运的，在公司的时候主要还是在学习，有时干些超出自己水平的事。更难可贵的是心态得到了锻炼，这种财富还是更加珍贵的。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Netty 对 Reactor 模式常见的疑问]]></title>
         <id>https://jiangjinxinn.github.io//post/netty-dui-reactor-mo-shi-chang-jian-de-yi-wen</id>
@@ -931,38 +952,6 @@ public class DataBatchConfiguration {
 <p>栗子：<br>
 设置两个数据源，通过 spring batch 进行跨数据库数据迁移，通过 JpaPagingItemReader 进行读取数据，用 jdbcTemplate 进行数据写入，<br>
 再实现 <code>org.springframework.batch.core.SkipListener</code> 接口记录跳过的数据，稍后人工处理，进行比对处理</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Hello Gridea]]></title>
-        <id>https://jiangjinxinn.github.io//post/hello-gridea</id>
-        <link href="https://jiangjinxinn.github.io//post/hello-gridea">
-        </link>
-        <updated>2018-12-11T16:00:00.000Z</updated>
-        <summary type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
-✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
-<!-- more -->
-<p><a href="https://github.com/getgridea/gridea">Github</a><br>
-<a href="http://hvenotes.fehey.com/">Gridea 主页</a><br>
-<a href="http://fehey.com/">示例网站</a></p>
-<h2 id="特性">特性👇</h2>
-<p>📝  你可以使用最酷的 <strong>Markdown</strong> 语法，进行快速创作</p>
-<p>🌉  你可以给文章配上精美的封面图和在文章任意位置插入图片</p>
-<p>🏷️  你可以对文章进行标签分组</p>
-<p>📋  你可以自定义菜单，甚至可以创建外部链接菜单</p>
-<p>💻  你可以在 <strong>𝖶𝗂𝗇𝖽𝗈𝗐𝗌</strong> 或 <strong>𝖬𝖺𝖼𝖮𝖲</strong> 设备上使用此客户端</p>
-<p>🌎  你可以使用 <strong>𝖦𝗂𝗍𝗁𝗎𝖻 𝖯𝖺𝗀𝖾𝗌</strong> 或 <strong>Coding Pages</strong> 向世界展示，未来将支持更多平台</p>
-<p>💬  你可以进行简单的配置，接入 <a href="https://github.com/gitalk/gitalk">Gitalk</a> 或 <a href="https://github.com/SukkaW/DisqusJS">DisqusJS</a> 评论系统</p>
-<p>🇬🇧  你可以使用<strong>中文简体</strong>或<strong>英语</strong></p>
-<p>🌁  你可以任意使用应用内默认主题或任意第三方主题，强大的主题自定义能力</p>
-<p>🖥  你可以自定义源文件夹，利用 OneDrive、百度网盘、iCloud、Dropbox 等进行多设备同步</p>
-<p>🌱 当然 <strong>Gridea</strong> 还很年轻，有很多不足，但请相信，它会不停向前🏃</p>
-<p>未来，它一定会成为你离不开的伙伴</p>
-<p>尽情发挥你的才华吧！</p>
-<p>😘 Enjoy~</p>
 ]]></content>
     </entry>
 </feed>
