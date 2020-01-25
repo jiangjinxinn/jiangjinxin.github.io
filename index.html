@@ -1,17 +1,15 @@
-
+<!DOCTYPE html>
 <html>
   <head>
-    
-<meta charset="utf-8" >
+    <meta charset="utf-8" >
 
 <title>空调房</title>
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1576424191816">
+<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1579935416182">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiangjinxinn.github.io//styles/main.css">
 
@@ -20,282 +18,253 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
 
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
 
 
   </head>
   <body>
     <div id="app" class="main">
-      <div class="site-header-container">
-  <div class="site-header">
-    <div class="left">
-      <a href="https://jiangjinxinn.github.io/">
-        <img class="avatar" src="https://jiangjinxinn.github.io//images/avatar.png?v=1576424191816" alt="" width="32px" height="32px">
-      </a>
-      <a href="https://jiangjinxinn.github.io/">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://jiangjinxinn.github.io/">
+        <img src="https://jiangjinxinn.github.io//images/avatar.png?v=1579935416182" class="site-logo">
         <h1 class="site-title">空调房</h1>
       </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
     </div>
-    <div class="right">
-      <transition name="fade">
-        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
-      </transition>
-    </div>
-  </div>
-</div>
-
-<transition name="fade">
-  <div class="menu-container" style="display: none;" v-show="menuVisible">
-    <div class="menu-list">
+    <div>
       
         
-          <a href="/" class="menu purple-link">
+          <a href="/" class="site-nav">
             首页
           </a>
         
       
         
-          <a href="/archives" class="menu purple-link">
+          <a href="/archives" class="site-nav">
             归档
           </a>
         
       
         
-          <a href="/tags" class="menu purple-link">
+          <a href="/tags" class="site-nav">
             标签
           </a>
         
       
         
-          <a href="/post/about" class="menu purple-link">
+          <a href="/post/about" class="site-nav">
             关于
           </a>
         
       
     </div>
   </div>
-</transition>
-
-
-      <div class="content-container">
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
         
+      
         
-<section class="post-item">
-    <div class="content">
-      <a href="https://jiangjinxinn.github.io//post/netty-dui-reactor-mo-shi-chang-jian-de-yi-wen">
-        <h2 class="post-title">Netty 对 Reactor 模式常见的疑问</h2>
-      </a>
-      <div class="post-abstract">
+      
         
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-12-15</span>
+      
         
-      </div>
+      
+        
+      
     </div>
-    
-  </section>
-
-<section class="post-item">
-    <div class="content">
-      <a href="https://jiangjinxinn.github.io//post/sublime-sui-shou-ji">
-        <h2 class="post-title">Sublime 随手记</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-12-08</span>
-        
-      </div>
+    <div class="site-description">
+      
     </div>
-    
-  </section>
-
-<section class="post-item">
-    <div class="content">
-      <a href="https://jiangjinxinn.github.io//post/stream-sheng-cheng-gou-gu-shu">
-        <h2 class="post-title">Stream 生成勾股数</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-11-06</span>
-        
-      </div>
+    <div class="site-footer">
+      Made with 🐸by jiangjinxin | <a class="rss" href="https://jiangjinxinn.github.io//atom.xml" target="_blank">RSS</a>
     </div>
-    
-  </section>
+  </div>
+</div>
 
-<section class="post-item">
-    <div class="content">
-      <a href="https://jiangjinxinn.github.io//post/leetcode-cncom-ui-xiu-gai">
-        <h2 class="post-title">leetcode-cn.com ui 修改</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-11-02</span>
-        
-      </div>
-    </div>
-    
-  </section>
 
-<section class="post-item">
-    <div class="content">
-      <a href="https://jiangjinxinn.github.io//post/mian-shi-2019-nian-10-yue">
-        <h2 class="post-title">面试（2019 年 10 月）</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-11-02</span>
-        
-          <span>
-            <i class="icon icon-pricetags-outline"></i>
-            
-              <a href="https://jiangjinxinn.github.io//tag/zSLEOgLaG">
-                面试
-                
-              </a>
-            
-          </span>
-        
-      </div>
-    </div>
-    
-  </section>
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiangjinxinn.github.io//post/netty-dui-reactor-mo-shi-chang-jian-de-yi-wen">
+                  <h2 class="post-title">Netty 对 Reactor 模式常见的疑问</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-15
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiangjinxinn.github.io//post/sublime-sui-shou-ji">
+                  <h2 class="post-title">Sublime 随手记</h2>
+                </a>
+                <div class="post-date">
+                  2019-12-08
+                </div>
+                <div class="post-abstract">
+                  <p>📃实现一个不会提示保存的 Sublime 随手记</p>
 
-<section class="post-item">
-    <div class="content">
-      <a href="https://jiangjinxinn.github.io//post/nacos-fu-wu-shan-chu-shi-bai-de-wen-ti">
-        <h2 class="post-title">Nacos 服务删除失败的问题</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-10-14</span>
-        
-      </div>
-    </div>
-    
-  </section>
-
-<section class="post-item">
-    <div class="content">
-      <a href="https://jiangjinxinn.github.io//post/yu-zhong-lei-shui-du-bai-tears-in-rain-monologue">
-        <h2 class="post-title">雨中泪水独白（Tears in rain monologue）</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-10-10</span>
-        
-      </div>
-    </div>
-    
-  </section>
-
-<section class="post-item">
-    <div class="content">
-      <a href="https://jiangjinxinn.github.io//post/shading-jdbc">
-        <h2 class="post-title">Shading-JDBC</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-10-06</span>
-        
-      </div>
-    </div>
-    
-  </section>
-
-<section class="post-item">
-    <div class="content">
-      <a href="https://jiangjinxinn.github.io//post/spring-batch-qian-yi-shu-ju">
-        <h2 class="post-title">Spring Batch 迁移数据</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-10-04</span>
-        
-      </div>
-    </div>
-    
-  </section>
-
-<section class="post-item">
-    <div class="content">
-      <a href="https://jiangjinxinn.github.io//post/hello-gridea">
-        <h2 class="post-title">Hello Gridea</h2>
-      </a>
-      <div class="post-abstract">
-        <p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiangjinxinn.github.io//post/stream-sheng-cheng-gou-gu-shu">
+                  <h2 class="post-title">Stream 生成勾股数</h2>
+                </a>
+                <div class="post-date">
+                  2019-11-06
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiangjinxinn.github.io//post/leetcode-cncom-ui-xiu-gai">
+                  <h2 class="post-title">leetcode-cn.com ui 修改</h2>
+                </a>
+                <div class="post-date">
+                  2019-11-02
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiangjinxinn.github.io//post/mian-shi-2019-nian-10-yue">
+                  <h2 class="post-title">面试（2019 年 10 月）</h2>
+                </a>
+                <div class="post-date">
+                  2019-11-02
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiangjinxinn.github.io//post/nacos-fu-wu-shan-chu-shi-bai-de-wen-ti">
+                  <h2 class="post-title">Nacos 服务删除失败的问题</h2>
+                </a>
+                <div class="post-date">
+                  2019-10-14
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiangjinxinn.github.io//post/yu-zhong-lei-shui-du-bai-tears-in-rain-monologue">
+                  <h2 class="post-title">雨中泪水独白（Tears in rain monologue）</h2>
+                </a>
+                <div class="post-date">
+                  2019-10-10
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiangjinxinn.github.io//post/shading-jdbc">
+                  <h2 class="post-title">Shading-JDBC</h2>
+                </a>
+                <div class="post-date">
+                  2019-10-06
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiangjinxinn.github.io//post/spring-batch-qian-yi-shu-ju">
+                  <h2 class="post-title">Spring Batch 迁移数据</h2>
+                </a>
+                <div class="post-date">
+                  2019-10-04
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
+              </div>
+              
+            </article>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://jiangjinxinn.github.io//post/hello-gridea">
+                  <h2 class="post-title">Hello Gridea</h2>
+                </a>
+                <div class="post-date">
+                  2018-12-12
+                </div>
+                <div class="post-abstract">
+                  <p>👏  欢迎使用 <strong>Gridea</strong> ！<br>
 ✍️  <strong>Gridea</strong> 一个静态博客写作客户端。你可以用它来记录你的生活、心情、知识、笔记、创意... ...</p>
 
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2018-12-12</span>
-        
-          <span>
-            <i class="icon icon-pricetags-outline"></i>
-            
-              <a href="https://jiangjinxinn.github.io//tag/gridea">
-                Gridea
-                
-              </a>
-            
-          </span>
-        
-      </div>
-    </div>
-    
-      <a href="https://jiangjinxinn.github.io//post/hello-gridea">
-        <div class="feature-container" style="background-image: url('https://jiangjinxinn.github.io//post-images/hello-gridea.png')">
+                </div>
+              </div>
+              
+                <a class="right" href="https://jiangjinxinn.github.io//post/hello-gridea">
+                  <div class="feature-container" style="background-image: url('https://jiangjinxinn.github.io//post-images/hello-gridea.png')">
+                  </div>
+                </a>
+              
+            </article>
+          
+
+          <div class="pagination-container">
+  
+  
+</div>
+
         </div>
-      </a>
-    
-  </section>
-
-
-<div class="pagination-container">
-  
-  
-</div>
-
-
       </div>
-
-      <div class="site-footer">
-  <div class="slogan"></div>
-  <div class="social-container">
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-  </div>
-  Made with 🐸by jiangjinxin | <a class="rss" href="https://jiangjinxinn.github.io//atom.xml" target="_blank">RSS</a>
-</div>
-
-
     </div>
-    <script type="application/javascript">
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
 
 hljs.initHighlightingOnLoad()
 

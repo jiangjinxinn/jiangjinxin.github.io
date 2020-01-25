@@ -2,13 +2,13 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiangjinxinn.github.io/</id>
     <title>空调房</title>
-    <updated>2019-12-15T15:36:34.122Z</updated>
+    <updated>2020-01-25T06:58:04.036Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiangjinxinn.github.io/"/>
     <link rel="self" href="https://jiangjinxinn.github.io//atom.xml"/>
     <logo>https://jiangjinxinn.github.io//images/avatar.png</logo>
     <icon>https://jiangjinxinn.github.io//favicon.ico</icon>
-    <rights>All rights reserved 2019, 空调房</rights>
+    <rights>All rights reserved 2020, 空调房</rights>
     <entry>
         <title type="html"><![CDATA[Netty 对 Reactor 模式常见的疑问]]></title>
         <id>https://jiangjinxinn.github.io//post/netty-dui-reactor-mo-shi-chang-jian-de-yi-wen</id>
@@ -229,7 +229,11 @@ public interface EventExecutorChooserFactory {
         <link href="https://jiangjinxinn.github.io//post/sublime-sui-shou-ji">
         </link>
         <updated>2019-12-08T08:05:25.000Z</updated>
-        <content type="html"><![CDATA[<figure data-type="image" tabindex="1"><img src="https://jiangjinxinn.github.io//post-images/1575792658471.jpg" alt="让人心烦的提示保存"></figure>
+        <summary type="html"><![CDATA[<p>📃实现一个不会提示保存的 Sublime 随手记</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>📃实现一个不会提示保存的 Sublime 随手记</p>
+<!-- more -->
+<figure data-type="image" tabindex="1"><img src="https://jiangjinxinn.github.io//post-images/1575792658471.jpg" alt="让人心烦的提示保存"></figure>
 <p>看到上面的提示框，各位有没有头大。平时经常 ctrl n 新建一个页面临时复制一些文本，进行对比或者查看，但是在关闭文件的时候会 Sublime 提示你保存，日积月累下来就有点烦了。<br>
 所以找下办法把 Sublime 改成草稿纸，让 ctrl n 新建的页面编辑关闭后不提示保存。</p>
 <hr>
@@ -369,8 +373,6 @@ Process finished with exit code 0
 <p>现场面（合计hr 面 2 小时 15 分）</p>
 <p>面试官 1:</p>
 <ol>
-<li>问权限系统细节，权限有什么功能，怎么做的，请求量多少，RBCA 哪个层级</li>
-<li>问用户系统</li>
 <li>看过哪些源码？</li>
 <li>spring bean 生命周期</li>
 <li>假设一个类 A 如下，beanFactory 中有两个类型的 Car，beanId 为 carA，carB，下面类中中 Car能否注入成功， 如何让 car 的注入动态化</li>
@@ -400,7 +402,7 @@ Process finished with exit code 0
 <ul>
 <li>react 的生命周期</li>
 <li>webpack 用过没</li>
-<li>zookeeper 一致性原理了，核心是啥</li>
+<li>zookeeper 一致性原理了，zookeeper 核心原理是啥</li>
 <li>有没有高并发经验</li>
 <li>实现以下代码，模仿ConcurrentHashMap 的computeIfAbsent，但是要求同样的 key 和 mappingFunction同时请求的时候只计算一次，阻塞其他线程</li>
 </ul>
@@ -415,32 +417,19 @@ Process finished with exit code 0
 }
 </code></pre>
 <h2 id="yz-公司">yz 公司：</h2>
-<p>电话面（约 30 分钟）</p>
-<ol>
-<li>聊权限系统表结构设计</li>
-<li>为什么要使用分库分表</li>
-<li>解释下一条 sql 在分库分表下是怎么查询的</li>
-<li>项目中 mq 用来干嘛的</li>
-<li>mq 消息发送失败怎么处理</li>
-<li>inodb 索引</li>
-<li>隔离级别</li>
-<li>mvcc，隔离级别怎么实现的</li>
-<li>讲下一致性视图</li>
-<li>行锁</li>
-</ol>
+<p>电话面（约 30 分钟）<br>
+2. 为什么要使用分库分表<br>
+3. 解释下一条 sql 在分库分表下是怎么查询的<br>
+4. 项目中 mq 用来干嘛的<br>
+5. mq 消息发送失败怎么处理<br>
+6. inodb 索引<br>
+7. 隔离级别<br>
+8. mvcc，隔离级别怎么实现的<br>
+9. 讲下一致性视图<br>
+10. 行锁</p>
 <h2 id="dd-公司">dd 公司</h2>
 <p>电话面（约 1 小时 10 分）</p>
 <ol>
-<li>问用户系统架构，怎么设计的，问的非常细）</li>
-<li>用户系统和权限、登录架构、依赖关系</li>
-<li>
-<ol>
-<li>登录系统如何进行 用户权限资源 debug</li>
-<li>登录系统如何高可用</li>
-</ol>
-</li>
-<li>用户系统哪里做的不好、怎么把他做好，如何做到高可用</li>
-<li>权限系统哪里做的不好、怎么把他做好</li>
 <li>用户打分算法 bm5（听不清叫啥了）了解否</li>
 <li>并发量有多少，请求量多少</li>
 <li>微服务用的什么框架</li>
@@ -461,12 +450,15 @@ Process finished with exit code 0
 <li>并发相关</li>
 <li>
 <ol>
-<li>volatile 语义，使用场景、JMM<br>
-2. sychronized 原理、讲述下锁优化、锁膨胀<br>
-3. 可重入锁和读写锁<br>
-4. 线程池包下主要有哪些类，主要是怎么设计的<br>
-5. 线程池中的阻塞队列有哪些<br>
-6. ConcurrentHashMap</li>
+<li>volatile 语义，使用场景、JMM
+<ol>
+<li>sychronized 原理、讲述下锁优化、锁膨胀</li>
+<li>可重入锁和读写锁</li>
+<li>线程池包下主要有哪些类，主要是怎么设计的</li>
+<li>线程池中的阻塞队列有哪些</li>
+<li>ConcurrentHashMap</li>
+</ol>
+</li>
 </ol>
 </li>
 <li>有没有碰到过 oom、sql 优化经验</li>
@@ -481,9 +473,12 @@ Process finished with exit code 0
 <li>Spring Boot</li>
 <li>
 <ol>
-<li>讲述下你的理解，和 Spring 有哪些区别<br>
-2. 条件装配怎么实现的<br>
-3. 如何实现一个 SpringBoot Starter</li>
+<li>讲述下你的理解，和 Spring 有哪些区别
+<ol>
+<li>条件装配怎么实现的</li>
+<li>如何实现一个 SpringBoot Starter</li>
+</ol>
+</li>
 </ol>
 </li>
 </ol>
@@ -565,7 +560,6 @@ Process finished with exit code 0
 </li>
 <li>有没有 oom 过</li>
 <li>老年代的对象的年龄都不大是什么原因？如何调优？</li>
-<li>面试官 1 问过线程池没😂</li>
 </ul>
 ]]></content>
     </entry>
