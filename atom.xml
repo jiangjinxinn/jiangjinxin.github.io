@@ -2,13 +2,107 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiangjinxinn.github.io/</id>
     <title>空调房</title>
-    <updated>2020-01-25T07:35:49.718Z</updated>
+    <updated>2020-02-06T06:34:57.614Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiangjinxinn.github.io/"/>
     <link rel="self" href="https://jiangjinxinn.github.io//atom.xml"/>
     <logo>https://jiangjinxinn.github.io//images/avatar.png</logo>
     <icon>https://jiangjinxinn.github.io//favicon.ico</icon>
     <rights>All rights reserved 2020, 空调房</rights>
+    <entry>
+        <title type="html"><![CDATA[Netty 增强写]]></title>
+        <id>https://jiangjinxinn.github.io//post/netty-zeng-qiang-xie</id>
+        <link href="https://jiangjinxinn.github.io//post/netty-zeng-qiang-xie">
+        </link>
+        <updated>2020-02-06T06:33:13.000Z</updated>
+        <content type="html"><![CDATA[<p>如果追求吞吐量，可以不用 ctx.writeAndFlush()，这种写数据是在每次 write 后都立即 flush，加急写数据。</p>
+<p>在 FlushConsolidationHandler 类的注释上有说明这个问题：<br>
+Flush operations are generally speaking expensive as these may trigger a syscall on the transport level. Thus it is in most cases (where write latency can be traded with throughput) a good idea to try to minimize flush operations as much as possible.</p>
+<p>相反，我们可以通过添加一个增强写的 Netty 的 FlushConsolidationHandler来处理这个事情，这个 Handler 有一个参数 explicitFlushAfterFlushes 可以控制拦截几次 flush 后才进行真正的 flush操作。</p>
+<p>这里提到 FlushConsolidationHandler 可以拦截，那么不用想，肯定是继承了 ChannelDuplexHandler。</p>
+<p>这里不知道大家有没有一个问题，在添加 FlushConsolidationHandler 设定了 explicitFlushAfterFlushes 之后看，如果 flush 次数不够难道就一直不 flush 出去了，需要等到后边一次请求进来的出站事件到来后 flush 够了才能写吗？</p>
+<p>这个问题肯定不是的，如果是的话就是个严重的缺陷的。</p>
+<p>这个问题我们通过查看 FlushConsolidationHandler 源码来说明下</p>
+<p>关键点在 flush 方法上，需要说明的是在任意一个 ctx 上执行 flush 的时候，会根据 pipeline 上设置的 ChannelHandlerContext，寻找下一个 outBoundHandler 传递下去，到 FlushConsolidationHandler 时候就会被拦截下来</p>
+<p>@Override<br>
+public void flush(ChannelHandlerContext ctx) throws Exception {<br>
+if (readInProgress) {<br>
+// If there is still a read in progress we are sure we will see a channelReadComplete(...) call. Thus<br>
+// we only need to flush if we reach the explicitFlushAfterFlushes limit.<br>
+if (++flushPendingCount == explicitFlushAfterFlushes) {<br>
+flushNow(ctx);<br>
+}<br>
+} else if (consolidateWhenNoReadInProgress) {<br>
+// Flush immediately if we reach the threshold, otherwise schedule<br>
+if (++flushPendingCount == explicitFlushAfterFlushes) {<br>
+flushNow(ctx);<br>
+} else {<br>
+scheduleFlush(ctx);<br>
+}<br>
+} else {<br>
+// Always flush directly<br>
+flushNow(ctx);<br>
+}<br>
+}<br>
+Netty 源码上的注解已经很好的说明了，有一个变量 readInProgress 标识是否正在读（即读事件未结束），这里我们先不查看 consolidateWhenNoReadInProgress 这个分支。如果 readInProgress 标记正在读 FlushConsolidationHandler 就会进行继续进行拦截，直到 flush 次数满足了后才会进行最后的 flush，读事件已经结束的话直接调用最后的 flush</p>
+<p>这就解答了上面的问题，如果 flush 次数不够，但是读事件已经结束了，依然会进行 flush。</p>
+<p>这时不知道大家有没有一个问题，那就是感觉这个 FlushConsolidationHandler 没什么用，因为作为开发者，我只要不调用 ctx.writeAndFlush() 即可，只调用 ctx.write ()，然后再后续 flush 掉。</p>
+<p>对的，这个在 Netty 的官方 demo 中就是这样实例的，只在读事件结束后才进行 ctx.flush()<br>
+/**</p>
+<ul>
+<li>
+<p>Handler implementation for the echo server.<br>
+*/<br>
+@Sharable<br>
+public class EchoServerHandler extends ChannelInboundHandlerAdapter {</p>
+<p>@Override<br>
+public void channelRead(ChannelHandlerContext ctx, Object msg) {<br>
+ctx.write(msg);<br>
+}</p>
+<p>@Override<br>
+public void channelReadComplete(ChannelHandlerContext ctx) {<br>
+ctx.flush();<br>
+}</p>
+<p>@Override<br>
+public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {<br>
+// Close the connection when an exception is raised.<br>
+cause.printStackTrace();<br>
+ctx.close();<br>
+}<br>
+}</p>
+</li>
+</ul>
+<p>那么这个 FlushConsolidationHandler 是怎么使用的呢？</p>
+<p>这个 FlushConsolidationHandler 主要是在异步写（在 handler 上添加了线程池）的时候使用的，拦截多次异步写即通过前面 consolidateWhenNoReadInProgress 来控制，而且为了防止异步写未执行够设定的 explicitFlushAfterFlushes ，会添加一个 future 来进行调用最后的 flush</p>
+<p>因为 Netty 的线程模型是一个 pipeline 绑定一个同一个 eventLoop，所以不会有并发执行的问题，同时不会有多个读事件在一个 pipeline 上发生，在同一次读事件未结束之前（未调用channelReadComplete 之前） 都会是 readInProgress true，保证 flush 的执行可以在读事件处理完后进行，如果读事件结束了，就可以直接 flush 出去。</p>
+<p>但是在一个 pipeline 上的读事件完成了不带表真正的读事件完成了，如果读事件是在另起一个线程池的业务线程中执行的，虽然当前 pipelin 上的读事件已经返回了，但是可能还没有调用 writeAndFlush。<br>
+consolidateWhenNoReadInProgress 参数的存在就是为了应对这种问题。</p>
+<p>看下实例的异步写情况：<br>
+UnorderedThreadPoolEventExecutor eventExecutors = new UnorderedThreadPoolEventExecutor(10);<br>
+try {<br>
+serverBootstrap.group(boss, worker)<br>
+.handler(new LoggingHandler(LogLevel.INFO))<br>
+.childHandler(new ChannelInitializer<NioSocketChannel>() {<br>
+protected void initChannel(NioSocketChannel ch) throws Exception {<br>
+ChannelPipeline pipeline = ch.pipeline();</p>
+<pre><code>                pipeline.addLast(new ServerIdleCheckHandler());
+                pipeline.addLast(&quot;frameDecoder&quot;, new FrameDecoder());
+                pipeline.addLast(&quot;frameEncoder&quot;, new FrameEncoder());
+
+                pipeline.addLast(&quot;protocolEncoder&quot;, new ProtocolEncoder());
+                pipeline.addLast(&quot;protocolDecoder&quot;, new ProtocolDecoder());
+
+
+                pipeline.addLast(new LoggingHandler(LogLevel.INFO));
+                pipeline.addLast(eventExecutors, &quot;serviceHandler&quot;, serviceDispatchHandler);
+
+            }
+        });
+ChannelFuture sync = serverBootstrap.bind(8098).sync();
+</code></pre>
+<p>pipeline.addLast(eventExecutors, &quot;serviceHandler&quot;, serviceDispatchHandler); 关键在这行代码</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[# 2019]]></title>
         <id>https://jiangjinxinn.github.io//post/2019</id>
@@ -775,183 +869,6 @@ Sharding-JDBC 采用了反向 sql 技术，将对数据库的更新操作的 sql
 <h3 id="seate">Seate</h3>
 <p><a href="https://github.com/seata/seata">Seate</a><br>
 <a href="https://shardingsphere.apache.org/document/current/cn/features/transaction/principle/base-transaction-seata/">Sharding-JDBC 的实现原理</a>。整合Seata AT事务时，需要把TM，RM，TC的模型融入到ShardingSphere 分布式事务的SPI的生态中。在数据库资源上，Seata通过对接 DataSource 接口，让JDBC操作可以同 TC 进行 RPC 通信。同样，ShardingSphere 也是面向 DataSource 接口对用户配置的物理 DataSource 进行了聚合，因此把物理 DataSource 二次包装为 Seata 的 DataSource 后，就可以把 Seata AT 事务融入到 ShardingSphere 的分片中。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Spring Batch 迁移数据]]></title>
-        <id>https://jiangjinxinn.github.io//post/spring-batch-qian-yi-shu-ju</id>
-        <link href="https://jiangjinxinn.github.io//post/spring-batch-qian-yi-shu-ju">
-        </link>
-        <updated>2019-10-03T17:26:51.000Z</updated>
-        <content type="html"><![CDATA[<p>背景：<br>
-埃森哲和 spring 合作，主要来自埃森哲的积累，随后 JSR-352 规范<br>
-核心在于领域模型</p>
-<p>相关资料:</p>
-<ul>
-<li><a href="https://cloud.tencent.com/developer/article/1456757">Spring Batch(1)——数据批处理概念                                                                            - 云+社区 - 腾讯云</a></li>
-<li>https://docs.spring.io/spring-batch/4.2.x/reference/html/index.html</li>
-<li>https://github.com/spring-projects/spring-batch/tree/master/spring-batch-samples</li>
-<li>https://github.com/jxtaliu/SpringBatchSample</li>
-</ul>
-<p>领域模型:<br>
-JobLanuncher、job、jobInstance<br>
-flow<br>
-step<br>
-tasklet (细化小任务）<br>
-chunk<br>
-itemReader<br>
-process<br>
-itemWriter</p>
-<p>一些问题:<br>
-不要把 jpa reader writer 注册为 bean，注销 bean 的时候会 close EntityManager 两遍（这个没深究，解决了问题我就溜了）</p>
-<p>任务 restart<br>
-restart, 默认失败的任务下次启动会，重新执行，根据 JobRepository 存储的信息进行<br>
-可以通过<code>org.springframework.batch.core.job.builder.JobBuilderHelper#preventRestart</code>  进行关闭<br>
-也可以在<code>org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader#setSaveState</code> 对齐关闭</p>
-<p>任务会在 <code>BATCH_STEP_EXECUTION_CONTEXT</code>  表中添加记录执行记录，已 <code>JpaPagingItemReader</code> 为例，会记录当前已进行到的数目count<br>
-<code>{&quot;batch.taskletTypetaskletType&quot;:&quot;org.springframework.batch.core.step.item.ChunkOrientedTasklet&quot;,&quot;JpaPagingItemReader.read.count&quot;:428,&quot;batch.stepType&quot;:&quot;org.springframework.batch.core.step.tasklet.TaskletStep&quot;}</code><br>
-如果失败了，下次会从记录的数目处开始读取，失败 skip 掉的数据，也会被算到读取的数据上</p>
-<p>重试，跳过<br>
-step 添加 backOffPolicy 等待一段时间</p>
-<p>step 之间多线程<br>
-多个 step 并发<br>
-远程分片，分区</p>
-<pre><code>package name.ealen.batch;
-
-import name.ealen.config.ExecutorConfiguration;
-import name.ealen.listener.JobListener;
-import name.ealen.model.Access;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JpaPagingItemReader;
-import org.springframework.batch.item.database.orm.JpaNativeQueryProvider;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
-import javax.annotation.Resource;
-import javax.persistence.EntityManagerFactory;
-
-//**/
-/ * Created by EalenXie on 2018/9/10 14:50./
-/ * :@EnableBatchProcessing提供用于构建批处理作业的基本配置/
-/ *//
-@Configuration
-@EnableBatchProcessing
-public class DataBatchConfiguration {
-    private static final Logger /log/= LoggerFactory./getLogger/(DataBatchConfiguration.class);
-
-    @Resource
-    private JobBuilderFactory jobBuilderFactory;    //用于构建JOB
-
-    @Resource
-    private StepBuilderFactory stepBuilderFactory;  //用于构建Step
-
-    @Resource
-    private EntityManagerFactory emf;           //注入实例化Factory 访问数据
-
-    @Resource
-    private JobListener jobListener;            //简单的JOB listener
-
-    @Resource
-    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
-
-    //**/
-/     * 一个简单基础的Job通常由一个或者多个Step组成/
-/     *//
-@Bean
-    public Job dataHandleJob() {
-        return jobBuilderFactory.get(&quot;dataHandleJob&quot;).
-                incrementer(new RunIdIncrementer()).
-                start(handleDataStep()).    //start是JOB执行的第一个step
-
-//                next(xxxStep()).
-//                next(xxxStep()).
-//                ...
-        listener(jobListener).      //设置了一个简单JobListener
-                build();
-    }
-
-    //**/
-/     * 一个简单基础的Step主要分为三个部分/
-/     * ItemReader : 用于读取数据/
-/     * ItemProcessor : 用于处理数据/
-/     * ItemWriter : 用于写数据/
-/     *//
-@Bean
-    public Step handleDataStep() {
-        return stepBuilderFactory.get(&quot;getData&quot;).
-                &lt;Access, Access&gt;chunk(100).        // &lt;输入,输出&gt; 。chunk通俗的讲类似于SQL的commit; 这里表示处理(processor)100条后写入(writer)一次。
-                faultTolerant().retryLimit(3).retry(Exception.class).skipLimit(100).skip(Exception.class).
-                listener(new SkipCheckingListener()). //捕捉到异常就重试,重试100次还是异常,JOB就停止并标志失败
-                reader(getDataReader()).         //指定ItemReader
-                processor(getDataProcessor()).   //指定ItemProcessor
-                writer(getDataWriter()).         //指定ItemWriter
-                build();
-    }
-
-    public ItemReader&lt;? extends Access&gt; getDataReader() {
-        //读取数据,这里可以用JPA,JDBC,JMS 等方式 读入数据
-        JpaPagingItemReader&lt;Access&gt; reader = new JpaPagingItemReader&lt;&gt;();
-        //这里选择JPA方式读数据 一个简单的 native SQL
-        String sqlQuery = “SELECT * FROM access”;
-        try {
-            JpaNativeQueryProvider&lt;Access&gt; queryProvider = new JpaNativeQueryProvider&lt;&gt;();
-            queryProvider.setSqlQuery(sqlQuery);
-            queryProvider.setEntityClass(Access.class);
-            queryProvider.afterPropertiesSet();
-            reader.setEntityManagerFactory(emf);
-            reader.setPageSize(3);
-            reader.setQueryProvider(queryProvider);
-            reader.afterPropertiesSet();
-            //所有ItemReader和ItemWriter实现都会在ExecutionContext提交之前将其当前状态存储在其中,如果不希望这样做,可以设置setSaveState(false)
-            reader.setSaveState(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return reader;
-    }
-
-    public ItemProcessor&lt;Access, Access&gt; getDataProcessor() {
-        return new ItemProcessor&lt;Access, Access&gt;() {
-            @Override
-            public Access process(Access access) throws Exception {
-                /log/.info(“processor data : “ + access.toString());  //模拟  假装处理数据,这里处理就是打印一下
-                return access;
-            }
-        };
-//        lambda也可以写为:
-//        return access -&gt; {
-//            log.info(“processor data : “ + access.toString());
-//            return access;
-//        };
-    }
-
-    public ItemWriter&lt;Access&gt; getDataWriter() {
-        return list -&gt; {
-            for (Access access : list) {
-                /log/.info(“write data : “ + access); //模拟 假装写数据 ,这里写真正写入数据的逻辑
-            }
-        };
-    }
-
-
-}
-
-</code></pre>
-<p>栗子：<br>
-设置两个数据源，通过 spring batch 进行跨数据库数据迁移，通过 JpaPagingItemReader 进行读取数据，用 jdbcTemplate 进行数据写入，<br>
-再实现 <code>org.springframework.batch.core.SkipListener</code> 接口记录跳过的数据，稍后人工处理，进行比对处理</p>
 ]]></content>
     </entry>
 </feed>

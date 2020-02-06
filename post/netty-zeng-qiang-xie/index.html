@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Netty 增强写 | 空调房</title>
+<meta name="description" content="">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1580970894551">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://jiangjinxinn.github.io//styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://jiangjinxinn.github.io/">
+        <img src="https://jiangjinxinn.github.io//images/avatar.png?v=1580970894551" class="site-logo">
+        <h1 class="site-title">空调房</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      
+    </div>
+    <div class="site-footer">
+      Made with 🐸by jiangjinxin | <a class="rss" href="https://jiangjinxinn.github.io//atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Netty 增强写</h2>
+            <div class="post-date">2020-02-06</div>
+            
+            <div class="post-content">
+              <p>如果追求吞吐量，可以不用 ctx.writeAndFlush()，这种写数据是在每次 write 后都立即 flush，加急写数据。</p>
+<p>在 FlushConsolidationHandler 类的注释上有说明这个问题：<br>
+Flush operations are generally speaking expensive as these may trigger a syscall on the transport level. Thus it is in most cases (where write latency can be traded with throughput) a good idea to try to minimize flush operations as much as possible.</p>
+<p>相反，我们可以通过添加一个增强写的 Netty 的 FlushConsolidationHandler来处理这个事情，这个 Handler 有一个参数 explicitFlushAfterFlushes 可以控制拦截几次 flush 后才进行真正的 flush操作。</p>
+<p>这里提到 FlushConsolidationHandler 可以拦截，那么不用想，肯定是继承了 ChannelDuplexHandler。</p>
+<p>这里不知道大家有没有一个问题，在添加 FlushConsolidationHandler 设定了 explicitFlushAfterFlushes 之后看，如果 flush 次数不够难道就一直不 flush 出去了，需要等到后边一次请求进来的出站事件到来后 flush 够了才能写吗？</p>
+<p>这个问题肯定不是的，如果是的话就是个严重的缺陷的。</p>
+<p>这个问题我们通过查看 FlushConsolidationHandler 源码来说明下</p>
+<p>关键点在 flush 方法上，需要说明的是在任意一个 ctx 上执行 flush 的时候，会根据 pipeline 上设置的 ChannelHandlerContext，寻找下一个 outBoundHandler 传递下去，到 FlushConsolidationHandler 时候就会被拦截下来</p>
+<p>@Override<br>
+public void flush(ChannelHandlerContext ctx) throws Exception {<br>
+if (readInProgress) {<br>
+// If there is still a read in progress we are sure we will see a channelReadComplete(...) call. Thus<br>
+// we only need to flush if we reach the explicitFlushAfterFlushes limit.<br>
+if (++flushPendingCount == explicitFlushAfterFlushes) {<br>
+flushNow(ctx);<br>
+}<br>
+} else if (consolidateWhenNoReadInProgress) {<br>
+// Flush immediately if we reach the threshold, otherwise schedule<br>
+if (++flushPendingCount == explicitFlushAfterFlushes) {<br>
+flushNow(ctx);<br>
+} else {<br>
+scheduleFlush(ctx);<br>
+}<br>
+} else {<br>
+// Always flush directly<br>
+flushNow(ctx);<br>
+}<br>
+}<br>
+Netty 源码上的注解已经很好的说明了，有一个变量 readInProgress 标识是否正在读（即读事件未结束），这里我们先不查看 consolidateWhenNoReadInProgress 这个分支。如果 readInProgress 标记正在读 FlushConsolidationHandler 就会进行继续进行拦截，直到 flush 次数满足了后才会进行最后的 flush，读事件已经结束的话直接调用最后的 flush</p>
+<p>这就解答了上面的问题，如果 flush 次数不够，但是读事件已经结束了，依然会进行 flush。</p>
+<p>这时不知道大家有没有一个问题，那就是感觉这个 FlushConsolidationHandler 没什么用，因为作为开发者，我只要不调用 ctx.writeAndFlush() 即可，只调用 ctx.write ()，然后再后续 flush 掉。</p>
+<p>对的，这个在 Netty 的官方 demo 中就是这样实例的，只在读事件结束后才进行 ctx.flush()<br>
+/**</p>
+<ul>
+<li>
+<p>Handler implementation for the echo server.<br>
+*/<br>
+@Sharable<br>
+public class EchoServerHandler extends ChannelInboundHandlerAdapter {</p>
+<p>@Override<br>
+public void channelRead(ChannelHandlerContext ctx, Object msg) {<br>
+ctx.write(msg);<br>
+}</p>
+<p>@Override<br>
+public void channelReadComplete(ChannelHandlerContext ctx) {<br>
+ctx.flush();<br>
+}</p>
+<p>@Override<br>
+public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {<br>
+// Close the connection when an exception is raised.<br>
+cause.printStackTrace();<br>
+ctx.close();<br>
+}<br>
+}</p>
+</li>
+</ul>
+<p>那么这个 FlushConsolidationHandler 是怎么使用的呢？</p>
+<p>这个 FlushConsolidationHandler 主要是在异步写（在 handler 上添加了线程池）的时候使用的，拦截多次异步写即通过前面 consolidateWhenNoReadInProgress 来控制，而且为了防止异步写未执行够设定的 explicitFlushAfterFlushes ，会添加一个 future 来进行调用最后的 flush</p>
+<p>因为 Netty 的线程模型是一个 pipeline 绑定一个同一个 eventLoop，所以不会有并发执行的问题，同时不会有多个读事件在一个 pipeline 上发生，在同一次读事件未结束之前（未调用channelReadComplete 之前） 都会是 readInProgress true，保证 flush 的执行可以在读事件处理完后进行，如果读事件结束了，就可以直接 flush 出去。</p>
+<p>但是在一个 pipeline 上的读事件完成了不带表真正的读事件完成了，如果读事件是在另起一个线程池的业务线程中执行的，虽然当前 pipelin 上的读事件已经返回了，但是可能还没有调用 writeAndFlush。<br>
+consolidateWhenNoReadInProgress 参数的存在就是为了应对这种问题。</p>
+<p>看下实例的异步写情况：<br>
+UnorderedThreadPoolEventExecutor eventExecutors = new UnorderedThreadPoolEventExecutor(10);<br>
+try {<br>
+serverBootstrap.group(boss, worker)<br>
+.handler(new LoggingHandler(LogLevel.INFO))<br>
+.childHandler(new ChannelInitializer<NioSocketChannel>() {<br>
+protected void initChannel(NioSocketChannel ch) throws Exception {<br>
+ChannelPipeline pipeline = ch.pipeline();</p>
+<pre><code>                pipeline.addLast(new ServerIdleCheckHandler());
+                pipeline.addLast(&quot;frameDecoder&quot;, new FrameDecoder());
+                pipeline.addLast(&quot;frameEncoder&quot;, new FrameEncoder());
+
+                pipeline.addLast(&quot;protocolEncoder&quot;, new ProtocolEncoder());
+                pipeline.addLast(&quot;protocolDecoder&quot;, new ProtocolDecoder());
+
+
+                pipeline.addLast(new LoggingHandler(LogLevel.INFO));
+                pipeline.addLast(eventExecutors, &quot;serviceHandler&quot;, serviceDispatchHandler);
+
+            }
+        });
+ChannelFuture sync = serverBootstrap.bind(8098).sync();
+</code></pre>
+<p>pipeline.addLast(eventExecutors, &quot;serviceHandler&quot;, serviceDispatchHandler); 关键在这行代码</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://jiangjinxinn.github.io//tag/M6RXCDY-O" class="tag">
+                    Netty
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://jiangjinxinn.github.io//post/2019">
+                  <h3 class="post-title">
+                    # 2019
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
