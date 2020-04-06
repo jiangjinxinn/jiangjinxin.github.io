@@ -2,17 +2,17 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiangjinxinn.github.io/</id>
     <title>空调房</title>
-    <updated>2020-02-06T10:38:02.258Z</updated>
+    <updated>2020-04-06T07:20:54.127Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiangjinxinn.github.io/"/>
-    <link rel="self" href="https://jiangjinxinn.github.io//atom.xml"/>
-    <logo>https://jiangjinxinn.github.io//images/avatar.png</logo>
-    <icon>https://jiangjinxinn.github.io//favicon.ico</icon>
+    <link rel="self" href="https://jiangjinxinn.github.io/atom.xml"/>
+    <logo>https://jiangjinxinn.github.io/images/avatar.png</logo>
+    <icon>https://jiangjinxinn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 空调房</rights>
     <entry>
         <title type="html"><![CDATA[Netty 增强写 FlushConsolidationHandler]]></title>
-        <id>https://jiangjinxinn.github.io//post/netty-zeng-qiang-xie</id>
-        <link href="https://jiangjinxinn.github.io//post/netty-zeng-qiang-xie">
+        <id>https://jiangjinxinn.github.io/post/netty-zeng-qiang-xie/</id>
+        <link href="https://jiangjinxinn.github.io/post/netty-zeng-qiang-xie/">
         </link>
         <updated>2020-02-06T06:33:13.000Z</updated>
         <content type="html"><![CDATA[<p>如果追求吞吐量，可以不用 ctx.writeAndFlush()，这种写数据是在每次 write 后都立即 flush，加急写数据。</p>
@@ -109,8 +109,8 @@ try {
     </entry>
     <entry>
         <title type="html"><![CDATA[# 2019]]></title>
-        <id>https://jiangjinxinn.github.io//post/2019</id>
-        <link href="https://jiangjinxinn.github.io//post/2019">
+        <id>https://jiangjinxinn.github.io/post/2019/</id>
+        <link href="https://jiangjinxinn.github.io/post/2019/">
         </link>
         <updated>2020-01-25T07:33:16.000Z</updated>
         <content type="html"><![CDATA[<p>网上看了些年终总结，大多数还是打广告性质的，讲述下自己这一年干了啥，作为论述下自己很牛逼的证据，确实，一眼看下来除了牛逼，嘴巴还要惊讶的被大张开来，暗暗和自己对比了下，咋人与人之间差距这么大呢。</p>
@@ -130,8 +130,8 @@ try {
     </entry>
     <entry>
         <title type="html"><![CDATA[Netty 对 Reactor 模式常见的疑问]]></title>
-        <id>https://jiangjinxinn.github.io//post/netty-dui-reactor-mo-shi-chang-jian-de-yi-wen</id>
-        <link href="https://jiangjinxinn.github.io//post/netty-dui-reactor-mo-shi-chang-jian-de-yi-wen">
+        <id>https://jiangjinxinn.github.io/post/netty-dui-reactor-mo-shi-chang-jian-de-yi-wen/</id>
+        <link href="https://jiangjinxinn.github.io/post/netty-dui-reactor-mo-shi-chang-jian-de-yi-wen/">
         </link>
         <updated>2019-12-15T12:34:10.000Z</updated>
         <content type="html"><![CDATA[<h2 id="netty-如何支持主从-reactor-模式">Netty 如何支持主从 Reactor 模式</h2>
@@ -344,15 +344,15 @@ public interface EventExecutorChooserFactory {
     </entry>
     <entry>
         <title type="html"><![CDATA[Sublime 随手记]]></title>
-        <id>https://jiangjinxinn.github.io//post/sublime-sui-shou-ji</id>
-        <link href="https://jiangjinxinn.github.io//post/sublime-sui-shou-ji">
+        <id>https://jiangjinxinn.github.io/post/sublime-sui-shou-ji/</id>
+        <link href="https://jiangjinxinn.github.io/post/sublime-sui-shou-ji/">
         </link>
         <updated>2019-12-08T08:05:25.000Z</updated>
         <summary type="html"><![CDATA[<p>📃实现一个不会提示保存的 Sublime 随手记</p>
 ]]></summary>
         <content type="html"><![CDATA[<p>📃实现一个不会提示保存的 Sublime 随手记</p>
 <!-- more -->
-<figure data-type="image" tabindex="1"><img src="https://jiangjinxinn.github.io//post-images/1575792658471.jpg" alt="让人心烦的提示保存"></figure>
+<figure data-type="image" tabindex="1"><img src="https://jiangjinxinn.github.io//post-images/1575792658471.jpg" alt="让人心烦的提示保存" loading="lazy"></figure>
 <p>看到上面的提示框，各位有没有头大。平时经常 ctrl n 新建一个页面临时复制一些文本，进行对比或者查看，但是在关闭文件的时候会 Sublime 提示你保存，日积月累下来就有点烦了。<br>
 所以找下办法把 Sublime 改成草稿纸，让 ctrl n 新建的页面编辑关闭后不提示保存。</p>
 <hr>
@@ -375,8 +375,8 @@ public interface EventExecutorChooserFactory {
     </entry>
     <entry>
         <title type="html"><![CDATA[Stream 生成勾股数]]></title>
-        <id>https://jiangjinxinn.github.io//post/stream-sheng-cheng-gou-gu-shu</id>
-        <link href="https://jiangjinxinn.github.io//post/stream-sheng-cheng-gou-gu-shu">
+        <id>https://jiangjinxinn.github.io/post/stream-sheng-cheng-gou-gu-shu/</id>
+        <link href="https://jiangjinxinn.github.io/post/stream-sheng-cheng-gou-gu-shu/">
         </link>
         <updated>2019-11-06T14:01:33.000Z</updated>
         <content type="html"><![CDATA[<p>突然想起去年看的《java8 实战》上的用 Stream 生成勾股数的例子。这里试一下。<br>
@@ -441,24 +441,24 @@ Process finished with exit code 0
     </entry>
     <entry>
         <title type="html"><![CDATA[leetcode-cn.com ui 修改]]></title>
-        <id>https://jiangjinxinn.github.io//post/leetcode-cncom-ui-xiu-gai</id>
-        <link href="https://jiangjinxinn.github.io//post/leetcode-cncom-ui-xiu-gai">
+        <id>https://jiangjinxinn.github.io/post/leetcode-cncom-ui-xiu-gai/</id>
+        <link href="https://jiangjinxinn.github.io/post/leetcode-cncom-ui-xiu-gai/">
         </link>
         <updated>2019-11-02T14:51:04.000Z</updated>
         <content type="html"><![CDATA[<h2 id="缘起">缘起</h2>
 <p>由于看到 leetcode 中国版更新了新的代码编辑器和长久以来在 leetcode 美国版网络有时不顺畅，决定迁到中国版上来。</p>
 <p>这时候就碰到了一个问题，中国版改了做题区的 ui，看着感觉非常的难受，不习惯。</p>
 <p>美国版的做题区的头部标题区等浑然一体十分自然<br>
-<img src="https://jiangjinxinn.github.io//post-images/1572706485835.png" alt=""></p>
+<img src="https://jiangjinxinn.github.io//post-images/1572706485835.png" alt="" loading="lazy"></p>
 <p>中国版标题区单独上移出来，最重要的是边框与底下部分加了阴影，感觉非常的奇怪。<br>
-<img src="https://jiangjinxinn.github.io//post-images/1572706501580.png" alt=""></p>
+<img src="https://jiangjinxinn.github.io//post-images/1572706501580.png" alt="" loading="lazy"></p>
 <h2 id="动手改一下">动手改一下</h2>
 <p>安装 chrome 的扩展插件 <a href="https://chrome.google.com/webstore/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne?hl=zh-CN">Stylus</a></p>
 <blockquote>
 <p>Stylus 是一个调整网页外观的用户样式管理器。它可让您轻松地为许多热门网站网站安装主题和皮肤。</p>
 </blockquote>
 <p>点击编写样式<br>
-<img src="https://jiangjinxinn.github.io//post-images/1572707096588.png" alt=""></p>
+<img src="https://jiangjinxinn.github.io//post-images/1572707096588.png" alt="" loading="lazy"></p>
 <p>添加 css 样式修改下</p>
 <pre><code class="language-css">[class*=&quot;HeaderCn&quot;] {
     box-shadow: none
@@ -478,13 +478,13 @@ Process finished with exit code 0
 </code></pre>
 <h2 id="最终效果">最终效果</h2>
 <p>阴影去掉后看起来就舒服多。顺带导航栏上菜单文字后面的 new、hot 也一起处理掉了。<br>
-<img src="https://jiangjinxinn.github.io//post-images/1572708099346.png" alt=""></p>
+<img src="https://jiangjinxinn.github.io//post-images/1572708099346.png" alt="" loading="lazy"></p>
 ]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[面试（2019 年 10 月）]]></title>
-        <id>https://jiangjinxinn.github.io//post/mian-shi-2019-nian-10-yue</id>
-        <link href="https://jiangjinxinn.github.io//post/mian-shi-2019-nian-10-yue">
+        <id>https://jiangjinxinn.github.io/post/mian-shi-2019-nian-10-yue/</id>
+        <link href="https://jiangjinxinn.github.io/post/mian-shi-2019-nian-10-yue/">
         </link>
         <updated>2019-11-01T20:07:54.000Z</updated>
         <content type="html"><![CDATA[<h2 id="we-公司">we 公司</h2>
@@ -684,22 +684,23 @@ Process finished with exit code 0
     </entry>
     <entry>
         <title type="html"><![CDATA[Nacos 服务删除失败的问题]]></title>
-        <id>https://jiangjinxinn.github.io//post/nacos-fu-wu-shan-chu-shi-bai-de-wen-ti</id>
-        <link href="https://jiangjinxinn.github.io//post/nacos-fu-wu-shan-chu-shi-bai-de-wen-ti">
+        <id>https://jiangjinxinn.github.io/post/nacos-fu-wu-shan-chu-shi-bai-de-wen-ti/</id>
+        <link href="https://jiangjinxinn.github.io/post/nacos-fu-wu-shan-chu-shi-bai-de-wen-ti/">
         </link>
         <updated>2019-10-14T06:12:22.000Z</updated>
         <content type="html"><![CDATA[<p>在使用 Nacos 作为服务监控的功能的时候出现了一个问题：<br>
 删除服务提示失败：<br>
-<img src="https://jiangjinxinn.github.io//post-images/1571033820491.png" alt=""></p>
+<img src="https://jiangjinxinn.github.io//post-images/1571033820491.png" alt="" loading="lazy"></p>
 <p>提示是对应的服务不存在<br>
 但是实际上 nacos 的后台管理页面上是存在的，并且我的后台页面上还出现了两个同名的服务，其中一个可以删除成功，另一个会报服务不存在</p>
-<p>回忆了下我之前的操作，其中一次在注册服务实例的时候，在服务名后面带上了 <code>@@</code>，加这个原先是为了做服务区分用的，用<code>@@</code> 字符是因为我在 nacos 的源码中看到他们是用 group + <code>@@</code> + serviceName 作为 service 的标识的，想模仿一波，贴近风格。</p>
+<p>回忆了下我之前的操作，其中一次在注册服务实例的时候，在服务名后面带上了 <code>@@</code>，加这个原先是为了做服务区分用的，用<code>@@</code> 字符是因为我在 nacos 的源码中看到他们是用 group + <code>@@</code> + serviceName 作为 service 的标识的，想模仿一波，贴近风格。。。</p>
 <p>直接到代码中找原因，先找到抛出异常的地方<br>
 <code>com.alibaba.nacos.naming.core.ServiceManager#easyRemoveService</code></p>
 <pre><code>    public void easyRemoveService(String namespaceId, String serviceName) throws Exception {
 
         Service service = getService(namespaceId, serviceName);
         if (service == null) {
+            // 这里抛出了异常，那么就是，service 为没有查询到
             throw new IllegalArgumentException(&quot;specified service not exist, serviceName : &quot; + serviceName);
         }
 
@@ -727,7 +728,7 @@ Process finished with exit code 0
     private Map&lt;String, Map&lt;String, Service&gt;&gt; serviceMap = new ConcurrentHashMap&lt;&gt;();
 </code></pre>
 <p>这里没有查询到，说明 serviceMap 没有存储了相应的键值对数据</p>
-<p>那控制后台的数据哪里来的呢？<br>
+<p>serviceMap 中没有存取数据，那控制后台上显示的服务实例数据是哪里来的呢？从 controller 的接口上查看下<br>
 <code>com.alibaba.nacos.naming.controllers.CatalogController#listDetail</code></p>
 <pre><code>  @RequestMapping(value = &quot;/services&quot;, method = RequestMethod.GET)
     public Object listDetail(HttpServletRequest request) {
@@ -744,7 +745,7 @@ Process finished with exit code 0
 
             List&lt;Service&gt; serviceList = new ArrayList&lt;&gt;(8);
             // 控制台上返回带数据来自这里，serviceList 传入serviceManager.getPagedService 方法中被填充了数据
-            // 说明这里返回了数据，往下看下
+            // 后台界面上有数据，说明这里返回了数据，继续往下看下
             serviceManager.getPagedService(namespaceId, pageNo, pageSize, keyword, StringUtils.EMPTY, serviceList, false);
 
             for (Service service : serviceList) {
@@ -766,6 +767,7 @@ Process finished with exit code 0
         }
     }
 </code></pre>
+<p>进入到 <code>NamingUtils</code> 中看下具体是如何把 group 去掉，进行 name 转化的。</p>
 <pre><code>public class NamingUtils {
 
     public static String getGroupedName(String serviceName, String groupName) {
@@ -777,7 +779,7 @@ Process finished with exit code 0
             return serviceNameWithGroup;
         }
         // public static final String SERVICE_INFO_SPLITER = &quot;@@&quot;;
-        // 这里直接加上将字符串分割，返回数据，所以如果你的服务的名字带有`@@`，`@@` 会被去掉
+        // 这里是通过直接将字符串按 &quot;@@&quot; 分割，返回数据，所以如果服务的名字带有`@@`，`@@` 会被去掉
         return serviceNameWithGroup.split(Constants.SERVICE_INFO_SPLITER)[1];
     }
 
@@ -789,7 +791,9 @@ Process finished with exit code 0
     }
 }
 </code></pre>
-<p><code>com.alibaba.nacos.naming.core.ServiceManager</code> 中的存入 service 信息接口</p>
+<p>从 <code>NamingUtils</code> 可以看出，返回前台界面的时候要将合并的数据，按<code>@@</code> 分割了，获取到服务对应的 group。</p>
+<p>最后看下存入 service 信息的时候，是否如所预想的那样，service 的 name 和 group 合并后没有做处理的。<br>
+<code>com.alibaba.nacos.naming.core.ServiceManager</code></p>
 <pre><code>    public void putService(Service service) {
         if (!serviceMap.containsKey(service.getNamespaceId())) {
             synchronized (putServiceLock) {
@@ -802,18 +806,35 @@ Process finished with exit code 0
         serviceMap.get(service.getNamespaceId()).put(service.getName(), service);
     }
 </code></pre>
-<p>这里找到原因，原因就是，我之前测试的时候，出于一些原因再服务的 name 注册的时候<br>
+<h3 id="总结">总结</h3>
+<p>nacos 的服务可以分组，如文档所说，模型是 service --&gt; cluster --&gt; insttance，cluster 就是代码中的 group。在实际的代码层面上处理的时候，是将 service 和 cluster 合并成一个属性，用 <code>@@</code> 做分割。</p>
+<pre><code class="language-java">/**
+ * Service of Nacos server side
+ * &lt;p&gt;
+ * We introduce a 'service --&gt; cluster --&gt; instance' model, in which service stores a list of clusters,
+ * which contain a list of instances.
+ * &lt;p&gt;
+ * This class inherits from Service in API module and stores some fields that do not have to expose to client.
+ *
+ * @author nkorange
+ */
+</code></pre>
+<p>这里找到服务删除不掉，原因就是前面所说的，我之前测试的时候，出于一些原因（憨），在注册服务的时候<br>
 <code>com.alibaba.nacos.api.naming.NamingService#registerInstance(java.lang.String, com.alibaba.nacos.api.naming.pojo.Instance)</code><br>
-注册的服务的名字后面带上了<code>@@</code>，前台展示的时候，<code>@@</code> 由于字符串被去掉了，但是 nacos 上存取服务实例的 map 中的名称中实际上带有我添加的 <code>@@</code>，删除的时候就失败了，因为查找不到</p>
-<p>🐸由于我后面测试的时候，注册的时候将<code>@@</code> 去掉了，所以看到注册的实例名字没有带<code>@@</code> 也没有察觉到不对</p>
-<p>为什么 nacos 在返回 service 的时候要将<code>@@</code> 去掉，由前所述因为 group 和 serviceName 合在一个字符串里了</p>
-<p>随后查看了下 nacos 中是有做字符检测的，但是正则写的有问题。。</p>
+注册的服务的名字后面带上了<code>@@</code>，前台展示的时候，<code>@@</code> 由于字符串被去掉了，但是 nacos 上存取服务实例的 map 中的名称中实际上带有我添加的 <code>@@</code>，删除的时候就失败了，因为根据服务 name 查找不到（实际的 name 多了 <code>@@</code> 后缀）。</p>
+<p>后台界面上出现两个同名的服务的原因也是因为这个，只是显示的服务名称相同，实际上是两个不同的服务。</p>
+<p>为什么 nacos 在返回 service 的时候要将<code>@@</code> 去掉，由前所述因为 group 和 serviceName，返回的时候要把合并的字符，还原回去。</p>
+<p>随后查看了下 nacos 中是有做字符检测的，但是正则写的有问题。。<br>
+<code>com.alibaba.nacos.naming.core.Service#validate</code>，<br>
+<code>com.alibaba.nacos.naming.core.Service#SERVICE_NAME_SYNTAX</code></p>
+<pre><code class="language-java">    private static final String SERVICE_NAME_SYNTAX = &quot;[0-9a-zA-Z@\\.:_-]+&quot;;
+</code></pre>
 ]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[雨中泪水独白（Tears in rain monologue）]]></title>
-        <id>https://jiangjinxinn.github.io//post/yu-zhong-lei-shui-du-bai-tears-in-rain-monologue</id>
-        <link href="https://jiangjinxinn.github.io//post/yu-zhong-lei-shui-du-bai-tears-in-rain-monologue">
+        <id>https://jiangjinxinn.github.io/post/yu-zhong-lei-shui-du-bai-tears-in-rain-monologue/</id>
+        <link href="https://jiangjinxinn.github.io/post/yu-zhong-lei-shui-du-bai-tears-in-rain-monologue/">
         </link>
         <updated>2019-10-09T16:18:17.000Z</updated>
         <content type="html"><![CDATA[<p>“	英语：I've seen things you people wouldn't believe. Attack ships on fire off the shoulder of Orion. I watched C-beams glitter in the dark near the Tannhäuser Gate. All those moments will be lost in time, like tears in rain. Time to die.	”</p>
@@ -823,8 +844,8 @@ Process finished with exit code 0
     </entry>
     <entry>
         <title type="html"><![CDATA[Shading-JDBC]]></title>
-        <id>https://jiangjinxinn.github.io//post/shading-jdbc</id>
-        <link href="https://jiangjinxinn.github.io//post/shading-jdbc">
+        <id>https://jiangjinxinn.github.io/post/shading-jdbc/</id>
+        <link href="https://jiangjinxinn.github.io/post/shading-jdbc/">
         </link>
         <updated>2019-10-06T13:42:56.000Z</updated>
         <content type="html"><![CDATA[<h2 id="流程">流程</h2>
@@ -847,7 +868,7 @@ Process finished with exit code 0
 <p>sql between 时会抛出异常<code>org.springframework.dao.InvalidDataAccessApiUsageException: Inline strategy cannot support range sharding.; nested exception is java.lang.IllegalStateException: Inline strategy cannot support range sharding.</code></p>
 <h2 id="分布式-id-生成">分布式 id 生成</h2>
 <h3 id="雪花算法默认">雪花算法（默认）</h3>
-<p><img src="https://jiangjinxinn.github.io//post-images/1570369804031.png" alt=""><br>
+<p><img src="https://jiangjinxinn.github.io//post-images/1570369804031.png" alt="" loading="lazy"><br>
 Sharding-JDBC 中生成后插入数据库中。</p>
 <ol>
 <li>时钟回拨<br>
@@ -862,7 +883,7 @@ worker id 如何配置？</li>
 <p>本地事务：ACID<br>
 分布式事务：BASE，通过业务逻辑将互斥操作从资源层面上移至业务层面。通过放宽对强一致性要求，来换取系统吞吐量的提升</p>
 <h3 id="xa">XA</h3>
-<p><img src="https://jiangjinxinn.github.io//post-images/1570501311460.png" alt=""><br>
+<p><img src="https://jiangjinxinn.github.io//post-images/1570501311460.png" alt="" loading="lazy"><br>
 两阶段事务提交采用X/OPEN组织定义的DTP 模型，通过抽象出来的AP、TM、RM 的概念可以保证事务的强一致性。其中 TM 和 RM 之间采用 XA 协议进行双向通信。与传统的本地事务相比，XA 事务增加了 prepare 阶段，数据库除了被动接受提交指令以外，还可以反向通知调用方事务是否可以被提交。因此 TM可以收集各分支事务的prepare 结果，最后进行原子提交，保证事务的强一致性。<br>
 分为准备阶段和提交阶段。每个参与者要么发送失败，要么在本地执行事务，写本地的 redo、undo 日志，但不提交。协调者收到了参与者失败消息或者超时消息，直接给每个参与者发送回滚（rollback）消息，否则发送提交（commit）消息。<br>
 需要在多个节点之间进行协调，而各节点对锁资源的释放必须等到事务最终提交的时候。这样比起单阶段提交，会消耗更多时间。事务执行时间延长，意味着锁资源发生冲突的概率增加。</p>

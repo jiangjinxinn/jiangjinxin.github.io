@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1580985480980">
+<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1586157580555">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiangjinxinn.github.io//styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://jiangjinxinn.github.io/">
-        <img src="https://jiangjinxinn.github.io//images/avatar.png?v=1580985480980" class="site-logo">
+        <img src="https://jiangjinxinn.github.io//images/avatar.png?v=1586157580555" class="site-logo">
         <h1 class="site-title">空调房</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -116,7 +116,7 @@
 <p>sql between 时会抛出异常<code>org.springframework.dao.InvalidDataAccessApiUsageException: Inline strategy cannot support range sharding.; nested exception is java.lang.IllegalStateException: Inline strategy cannot support range sharding.</code></p>
 <h2 id="分布式-id-生成">分布式 id 生成</h2>
 <h3 id="雪花算法默认">雪花算法（默认）</h3>
-<p><img src="https://jiangjinxinn.github.io//post-images/1570369804031.png" alt=""><br>
+<p><img src="https://jiangjinxinn.github.io//post-images/1570369804031.png" alt="" loading="lazy"><br>
 Sharding-JDBC 中生成后插入数据库中。</p>
 <ol>
 <li>时钟回拨<br>
@@ -131,7 +131,7 @@ worker id 如何配置？</li>
 <p>本地事务：ACID<br>
 分布式事务：BASE，通过业务逻辑将互斥操作从资源层面上移至业务层面。通过放宽对强一致性要求，来换取系统吞吐量的提升</p>
 <h3 id="xa">XA</h3>
-<p><img src="https://jiangjinxinn.github.io//post-images/1570501311460.png" alt=""><br>
+<p><img src="https://jiangjinxinn.github.io//post-images/1570501311460.png" alt="" loading="lazy"><br>
 两阶段事务提交采用X/OPEN组织定义的DTP 模型，通过抽象出来的AP、TM、RM 的概念可以保证事务的强一致性。其中 TM 和 RM 之间采用 XA 协议进行双向通信。与传统的本地事务相比，XA 事务增加了 prepare 阶段，数据库除了被动接受提交指令以外，还可以反向通知调用方事务是否可以被提交。因此 TM可以收集各分支事务的prepare 结果，最后进行原子提交，保证事务的强一致性。<br>
 分为准备阶段和提交阶段。每个参与者要么发送失败，要么在本地执行事务，写本地的 redo、undo 日志，但不提交。协调者收到了参与者失败消息或者超时消息，直接给每个参与者发送回滚（rollback）消息，否则发送提交（commit）消息。<br>
 需要在多个节点之间进行协调，而各节点对锁资源的释放必须等到事务最终提交的时候。这样比起单阶段提交，会消耗更多时间。事务执行时间延长，意味着锁资源发生冲突的概率增加。</p>
@@ -148,7 +148,7 @@ Sharding-JDBC 采用了反向 sql 技术，将对数据库的更新操作的 sql
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://jiangjinxinn.github.io//post/spring-batch-qian-yi-shu-ju">
+                <a href="https://jiangjinxinn.github.io/post/spring-batch-qian-yi-shu-ju/">
                   <h3 class="post-title">
                     Spring Batch 迁移数据
                   </h3>
