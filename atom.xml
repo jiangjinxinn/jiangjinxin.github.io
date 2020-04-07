@@ -2,13 +2,277 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiangjinxinn.github.io/</id>
     <title>空调房</title>
-    <updated>2020-04-06T07:42:44.133Z</updated>
+    <updated>2020-04-07T01:34:41.118Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiangjinxinn.github.io/"/>
     <link rel="self" href="https://jiangjinxinn.github.io/atom.xml"/>
     <logo>https://jiangjinxinn.github.io/images/avatar.png</logo>
     <icon>https://jiangjinxinn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 空调房</rights>
+    <entry>
+        <title type="html"><![CDATA[Spring-Cloud-Config]]></title>
+        <id>https://jiangjinxinn.github.io/post/spring-cloud-config/</id>
+        <link href="https://jiangjinxinn.github.io/post/spring-cloud-config/">
+        </link>
+        <updated>2020-04-07T01:31:48.000Z</updated>
+        <content type="html"><![CDATA[<h2 id=""></h2>
+<h2 id="如何使用">如何使用</h2>
+<h3 id="查看应用配置信息">查看应用配置信息</h3>
+<p>config-server对应的域名/ip+下列资源路径</p>
+<pre><code>/{application}/{profile}[/{label}]
+/{application}-{profile}.yml
+/{label}/{application}-{profile}.yml
+/{application}-{profile}.properties
+/{label}/{application}-{profile}.properties
+</code></pre>
+<p><strong>说明：</strong><br>
+<code>{profile}</code>  的默认是 <code>default</code> <br>
+<code>{label}</code> 默认是 <code>master</code> ， <code>{label}</code> 可以是 <code>git branch name</code> 、<code>**commit id**</code> 、 <code>git tag</code> <br>
+**注：**填写了不存在的 profile，http 请求是可以成功的，返回时是不会有提示信息的（返回的是 default）</p>
+<pre><code>$ curl localhost:7050/ground/dnot-exist-profile
+{&quot;name&quot;:&quot;ground&quot;,&quot;profiles&quot;:[&quot;dnot-exist-profile&quot;],&quot;label&quot;:null,&quot;version&quot;:&quot;7860aa370d6496d218a8a382fd1331548f340bfe&quot;,&quot;state&quot;:null,&quot;propertySources&quot;:[{&quot;name&quot;:&quot;overrides&quot;,&quot;source&quot;:{&quot;weier.keji&quot;:&quot;ok&quot;,&quot;spring.cloud.config.allowOverride&quot;:&quot;true&quot;,&quot;override&quot;:&quot;override&quot;,&quot;spring.cloud.config.overrideSystemProperties&quot;:&quot;false&quot;}},{&quot;name&quot;:&quot;https://gitlab.weierai.com/respo/dev/ground.git/application.yml&quot;,&quot;source&quot;:{&quot;spring.data.mongodb.uri&quot;:&quot;mongodb://sprint:mxAVrve5IGLfu5W7@dds-bp15cde8d945b2e41.mongodb.rds.aliyuncs.com:3717,dds-bp15cde8d945b2e42.mongodb.rds.aliyuncs.com:3717/b2_sprint_db?replicaSet=mgset-17069483&quot;,&quot;spring.zipkin.base-url&quot;:&quot;http://172.16.16.65:9411&quot;,&quot;spring.profiles.active&quot;:&quot;default&quot;,&quot;eureka.instance.prefer-ip-address&quot;:true,&quot;eureka.instance.health-check-url-path&quot;:&quot;/actuator/health&quot;,&quot;eureka.instance.instance-id&quot;:&quot;${spring.cloud.client.hostname}:${server.port}:${eureka.instance.metadata-map.routingTag:default}&quot;,&quot;eureka.client.serviceUrl.defaultZone&quot;:&quot;http://172.16.16.65:9997/eureka/&quot;,&quot;feign.compression.request.enabled&quot;:true,&quot;feign.okhttp.enabled&quot;:true,&quot;feign.httpclient.enabled&quot;:false,&quot;feign.hystrix.enabled&quot;:false,&quot;gitlab.gitHost&quot;:&quot;https://gitlab.weierai.com/&quot;,&quot;gitlab.gitApiToken&quot;:&quot;zx-uSqmDNZKsFi2y7hK5&quot;,&quot;server.port&quot;:8080}}]}⏎
+</code></pre>
+<h3 id="config-sever配置合并覆盖策略">config-sever配置合并覆盖策略</h3>
+<h4 id="配置完全覆盖">配置完全覆盖</h4>
+<p>可以覆盖所有连接到 config-server 的客户端的配置<br>
+server 添加下面的配置后</p>
+<pre><code class="language-yaml">spring:
+  cloud:
+    config:
+      server:
+        overrides:
+          foo: bar
+          weier:
+            keji: ok
+</code></pre>
+<p>就可以把 client environment 中 foo 的值设置为 bar，weier.keji 设置为 ok<br>
+override 优先级高于在 git 仓库中的配置。</p>
+<p><a href="https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.2.2.RELEASE/reference/html/#property-overrides">https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.2.2.RELEASE/reference/html/#property-overrides</a></p>
+<h4 id="配置优先级">配置优先级</h4>
+<p>config 的核心概念与 spring 的 <code>Environment</code> 和 <code>PropertySource</code> 一致，从 config 获取到的配置都会被整合进 Spring 的 <code>Environment</code> 中。</p>
+<p>配置源 <code>PropertySource</code> 的优先级对应于 <code>Environment</code> 中的 <code>PropertiesSourceLists</code> 中的排列顺序，越前面的优先级越高。<br>
+<img src="https://cdn.nlark.com/yuque/0/2020/png/132176/1585741788386-aca070cb-834a-488f-ad8b-50ddd95562d9.png#align=left&amp;display=inline&amp;height=821&amp;name=%E5%9B%BE%E7%89%87.png&amp;originHeight=1642&amp;originWidth=2880&amp;size=1444003&amp;status=done&amp;style=none&amp;width=1440" alt="图片.png" loading="lazy"></p>
+<p>spring 应用中可以通过注入拿到 Environment</p>
+<pre><code class="language-java">@Autowired
+private Environment environment;
+</code></pre>
+<p>在 spring-cloud-config 的默认配置下<br>
+配置源优先级如下：</p>
+<ol>
+<li>config-overrides</li>
+<li>config: application-{profile}.yml</li>
+<li>config: application.yml</li>
+<li>config: bootstrap.yml</li>
+<li>system.properties （-D vm 参数）</li>
+<li>application-{profile}.yml</li>
+<li>application.yml</li>
+<li>bootstrap.yml</li>
+</ol>
+<p>-D 的 vm 参数默认会被 config 覆盖，可以通过在 git 仓库中修改系统变量覆盖策略来修改这个行为</p>
+<pre><code class="language-yaml">cloud:
+	config:
+  	# 是否覆盖系统参数
+		override-system-properties: false
+</code></pre>
+<p>这里需要说明的是，这个覆盖配置只有从 config 拉取到才会生效，应用本地配置文件配置了这个参数是不会生效的，所以在我们使用了 git 作为 config 的后备文件系统的时候，这个参数只有修改在 git 仓库中才会生效</p>
+<h4 id="配置合并策略">配置合并策略</h4>
+<p>从使用的角度上看，多个配置源的配置像是做了合并覆盖的。<br>
+实际上在获取配置的时候是按照配置优先级获取的，所有配置源会按照优先级排序，优先级高的，在获取配置项的时候优先返回，查找不到就到下一个配置源中获取。<br>
+对应于 <code>Environment</code> 中的 <code>PropertiesSourceLists</code> <br>
+相关代码：</p>
+<p><code>org.springframework.core.env.PropertySourcesPropertyResolver#getProperty(java.lang.String, java.lang.Class&lt;T&gt;, boolean)</code> ，从 <code>Environmet</code> 中获取配置信息的时候，会遍历 <code>PropertySourceLists</code> 查找到了相关的配置就会立即返回。<br>
+<img src="https://cdn.nlark.com/yuque/0/2020/png/132176/1585791557211-a1766dd5-1fa1-4672-913d-bd097e0837e1.png#align=left&amp;display=inline&amp;height=443&amp;name=%E5%9B%BE%E7%89%87.png&amp;originHeight=886&amp;originWidth=1678&amp;size=743094&amp;status=done&amp;style=none&amp;width=839" alt="图片.png" loading="lazy"></p>
+<h3 id="加密配置文件">加密配置文件</h3>
+<h4 id="server-加入配置开启-client-解密加密文本">server 加入配置，开启 client 解密加密文本</h4>
+<pre><code class="language-yaml">spring.cloud.config.server.encrypt.enabled=false
+</code></pre>
+<h4 id="server-client-加入密钥">server、client 加入密钥</h4>
+<p>密钥可以通过 -D 参数加入 <code>encrypt.key=${PASSWORD}</code><br>
+配置在 bootstrap.yml 中</p>
+<pre><code>encrypt.key=some-secret
+# encrypt.key=${PASSWORD}
+</code></pre>
+<h4 id="加密配置文件-2">加密配置文件</h4>
+<p>yaml 中<br>
+在配置文件中的配置项加上 <code>{cipher}</code> 即可，<strong>yml 中需要加引号</strong></p>
+<pre><code class="language-yaml">spring:
+  datasource:
+    username: dbuser
+    password: '{cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ'
+</code></pre>
+<p>properties中<br>
+注意：properties 中不需要加  <code>''</code></p>
+<pre><code>spring.datasource.username: dbuser
+spring.datasource.password: {cipher}FKSAJDFGYOS8F7GLHAKERGFHLSAJ
+</code></pre>
+<h4 id="server-加密的-endpoint">server 加密的 endpoint</h4>
+<p>/encrypt/status：加密功能状态<br>
+/key：秘钥信息<br>
+/encrypt，post 请求<br>
+/decrypt，post 请求</p>
+<p><strong>获取加密文本</strong></p>
+<pre><code class="language-yaml">$ curl localhost:7050/encrypt -d password
+</code></pre>
+<p><strong>获取解密文本</strong></p>
+<pre><code class="language-yaml">$ curl localhost:7050/decrypt -d fjsakldfjfdkfjlflkjfsdkljflsdjf
+</code></pre>
+<p>**小提示：进行 curl 测试的时候， **<code>**--data-urlencode**</code> 用于正确 url 编码</p>
+<p>If you testing with curl, then use &gt; <code>--data-urlencode</code> (instead of &gt; <code>-d</code>) or set an explicit &gt; <code>Content-Type: text/plain</code> to make sure curl encodes the data correctly when there are special characters ('+' is particularly tricky).<br>
+<a href="https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.2.2.RELEASE/reference/html/#_encryption_and_decryption">也可以使用 spring 的 cli 加解密</a></p>
+<h4 id="刷新-client-配置-灰度发布"><a href="https://github.com/spring-cloud/spring-cloud-config#spring-cloud-config-client">刷新 client 配置、灰度发布</a></h4>
+<p>在一些少数情况下，需要刷新 client 的配置，client 引入 <code>spring-boot-actuator-starter</code>  即可<br>
+client 添加 actuator 的配置，将 /refresh 端点暴露出来</p>
+<pre><code class="language-yaml">management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+      # 这里按需配置
+        include: health,info,refresh
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+</code></pre>
+<p>在需要刷新配置的类上添加 <code>@RefreshScope</code> 注解</p>
+<pre><code class="language-java">package com.wekj.ground.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.core.env.Environment;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+
+@RestController
+@RefreshScope
+public class TestController {
+    @Autowired
+    private Environment environment;
+
+    @Value(&quot;${foo:bar}&quot;)
+    private String foo;
+
+    @GetMapping(&quot;foo&quot;)
+    public String getFoo() {
+        return foo;
+    }
+}
+</code></pre>
+<p>调用 actuator 端点进行刷新：</p>
+<pre><code>$ curl -X POST http://localhost:7010/actuator/refresh
+</code></pre>
+<pre><code>{&quot;code&quot;:1,&quot;msg&quot;:&quot;操作成功!&quot;,&quot;data&quot;:[&quot;foo&quot;]}
+</code></pre>
+<p>调用 /refresh 刷新 bean 的时候，会将需要刷新的 bean 销毁掉，下次从 bean factory 重新获取 bean 时，重新初始化一遍。<br>
+依赖了可刷新 bean 的 bean 注入的是刷新 bean 的代理对象，所以不会受到影响。</p>
+<h3 id="配置缓存">配置缓存</h3>
+<p><a href="">默认 server 端是不会缓存获取到的配置的</a>，client 也不会有缓存</p>
+<h4 id="server-端如何缓存配置">server 端如何缓存配置</h4>
+<p>client 到 sever 获取配置的时候，server 会从 git 仓库获取，默认是每次获取配置都从 git 仓库获取，可以修改配置做到 server 缓存配置功能</p>
+<pre><code class="language-yaml"># 单位 s，默认为0，表示每次获取配置都从远程 git 仓库获取
+spring.cloud.config.server.git.refreshRate=0
+</code></pre>
+<blockquote>
+<h5 id="git-refresh-rate"><a href="https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.2.2.RELEASE/reference/html/#_git_refresh_rate">Git Refresh Rate</a></h5>
+</blockquote>
+<p>You can control how often the config server will fetch updated configuration data from your Git backend by using &gt; <code>spring.cloud.config.server.git.refreshRate</code>. The value of this property is specified in seconds. By default the value is 0, meaning the config server will fetch updated configuration from the Git repo every time it is requested.<br>
+server 是否刷新缓存代码：<br>
+<code>org.springframework.cloud.config.server.environment.JGitEnvironmentRepository#refresh</code><br>
+server 缓存存放地方可以修改</p>
+<pre><code>spring.cloud.config.server.git.basedir=
+</code></pre>
+<p>server 的缓存会在 server 关闭的时候删除掉 <code>org.springframework.cloud.config.server.support.AbstractScmAccessor#createBaseDir</code> <br>
+在 server 启动后，git 远程仓库连接不上了，这时会使用本地缓存。</p>
+<h4 id="客户端缓存配置">客户端缓存配置</h4>
+<p><strong>客户端是不会缓存从 config 获取到的配置的</strong></p>
+<p>相关代码在：<br>
+<code>org.springframework.cloud.config.client.ConfigServicePropertySourceLocator#locate</code><br>
+<code>org.springframework.cloud.config.client.ConfigServicePropertySourceLocator#getRemoteEnvironment</code><br>
+可以在 <code>getRemoteEnvironment</code> 这个方法中看到每次获取配置都是发起 http 请求到 server 的，获取不到配置的话，再根据是否配置了快速失败抛出异常。<br>
+<img src="https://cdn.nlark.com/yuque/0/2020/png/132176/1585756508026-2b053719-0fdf-4c26-8f1a-8c40ca5dec65.png#align=left&amp;display=inline&amp;height=729&amp;name=image.png&amp;originHeight=729&amp;originWidth=967&amp;size=137709&amp;status=done&amp;style=none&amp;width=967" alt="image.png" loading="lazy"></p>
+<figure data-type="image" tabindex="1"><img src="https://cdn.nlark.com/yuque/0/2020/png/132176/1585756403102-dfc217f2-184d-4474-ad41-95cfd28bd1d6.png#align=left&amp;display=inline&amp;height=495&amp;name=image.png&amp;originHeight=495&amp;originWidth=1128&amp;size=85782&amp;status=done&amp;style=none&amp;width=1128" alt="image.png" loading="lazy"></figure>
+<h3 id="本地开发方案">本地开发方案</h3>
+<h4 id="本地开发方案-2">本地开发方案</h4>
+<p>1、需要修改配置的话，在配置仓库拉 feature 同名分支<br>
+2、验证无误后提交merger request合并到对应环境</p>
+<h4 id="发布流程">发布流程</h4>
+<p>建议：本地开发可以只留下一个 bootstrap.yml，application.yml 都去掉</p>
+<h4 id="label-特点">label 特点</h4>
+<p><strong>label 应该理解成配置的版本控制，指定 label 就是指定配置的哪个版本</strong></p>
+<p>label 可以指定多个 label，在指定多个 label 的时候，会一个个尝试获取相对应 label 的配置，直到一个 label 成功为止，这在开发 feature 分支时比较有用。</p>
+<p>下面这个例子会先查询 myfeature label 是否存在，存在的话拉取到配置就会停止，develop  的配置会被抛弃，如果 myfeature 不存在，就会获取 develop label 的配置。</p>
+<pre><code>spring.cloud.config.label=myfeature,develop
+</code></pre>
+<h4 id="多配置文件方案">多配置文件方案</h4>
+<p>需要指定多个 profile 的话这样配置到 bootstrap.yml 中</p>
+<pre><code class="language-yaml">spring: 
+  cloud:
+    config:
+      uri: http://localhost:7050
+      label: local
+      username: user
+      password: password
+      allowOverride: true
+      overrideNone: true
+      overrideSystemProperties: false
+      # 配置激活的 profile
+      profile: default,local
+</code></pre>
+<p>应用启动的时候，会将 bootstrap.yml profile 中指定的配置拉取下来，再结合本地的配置。<br>
+应用启动的配置来源于两个，一个是获取到的云端配置，一个是本地配置，两次获取都可以指定需要获取的 profile，不会覆盖。<br>
+这里的意思就是，云端无法覆盖应用启动指定的 profile，只能获取 spring.cloud.config.profile 对应的配置。</p>
+<figure data-type="image" tabindex="2"><img src="https://cdn.nlark.com/yuque/0/2020/png/132176/1585814345069-3ac09333-feea-4ebb-8879-02c0bf0c75a8.png#align=left&amp;display=inline&amp;height=435&amp;name=%E5%9B%BE%E7%89%87.png&amp;originHeight=870&amp;originWidth=2880&amp;size=1345204&amp;status=done&amp;style=none&amp;width=1440" alt="图片.png" loading="lazy"></figure>
+<h3 id="server高可用-安全性">server高可用、安全性</h3>
+<h4 id="client-健康检查">client 健康检查</h4>
+<p>检测是否能连接 sever 成功，可以不打开，因为动态刷新需求的很少。应用启动成功后，server down 掉也不影响应用。</p>
+<pre><code>health.config.enabled=false
+# 健康检查周期默认 5 分钟，单位 ms
+health.config.time-to-live=milliseconds
+</code></pre>
+<h4 id="client-启动快速失败">client 启动快速失败</h4>
+<p><strong>强烈建议打开：</strong></p>
+<pre><code>spring.cloud.config.fail-fast=true
+</code></pre>
+<p>打开后客户端快速失败后，应用启动时，如果连接不上 server 就会停止启动，默认是没有打开的，连接失败只会打印 warn 日志。<br>
+并且在应用启动成功后，如果 server 挂了，应用是不会受到影响的。在刷新配置的时候会提示 server down 了。</p>
+<h4 id="client-密码连接-server">client 密码连接 server</h4>
+<p>server 引入 <code>spring-security</code> 的 starter</p>
+<pre><code># 不配置的话默认是 user
+spring.security.user.name
+# 不配置的话会随机生成一个密码
+spring.security.user.password
+</code></pre>
+<pre><code>$ curl user:password@localhost:7050/ground/default/master
+</code></pre>
+<p>config-client 把密码配置到 spring.cloud.config 下面</p>
+<pre><code class="language-yaml">spring:
+  application:
+    name: ground
+  cloud:
+    config:
+      uri: http://localhost:7050
+      label: local
+      fail-fast: true
+      username: user
+      password: password
+</code></pre>
+<ol>
+<li>如果连接 server 的密码错误，启动报错不会提示密码错误，而是下面的这个错误（打开快速失败很有必要）</li>
+</ol>
+<pre><code>java.lang.IllegalStateException: Could not locate PropertySource and the fail fast property is set, failing
+	at org.springframework.cloud.config.client.ConfigServicePropertySourceLocator.locate(ConfigServicePropertySourceLocator.java:148) ~[spring-cloud-config-client-2.2.2.RELEASE.jar:2.2.2.RELEASE]
+	at org.springframework.cloud.bootstrap.config.PropertySourceLocator.locateCollection(PropertySourceLocator.java:52) ~[spring-cloud-context-2.2.2.RELEASE.jar:2.2.2.RELEASE]
+	at org.springframework.cloud.config.client.ConfigServicePropertySourceLocator.locateCollection(ConfigServicePropertySourceLocator.java:163) ~[spring-cloud-config-client-2.2.2.RELEASE.jar:2.2.2.RELEASE]
+	at org.springframework.cloud.bootstrap.config.PropertySourceBootstrapConfiguration.initialize(PropertySourceBootstrapConfiguration.java:97) ~[spring-cloud-context-2.2.2.RELEASE.jar:2.2.2.RELEASE]
+</code></pre>
+<h4 id="server-启动配置来自-config">server 启动配置来自 config</h4>
+<p>如果选择内嵌在 springboot 应用中启动 server，可以使 server 的配置也从 git 拉取<br>
+<a href="https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.2.2.RELEASE/reference/html/#_embedding_the_config_server">https://cloud.spring.io/spring-cloud-static/spring-cloud-config/2.2.2.RELEASE/reference/html/#_embedding_the_config_server</a></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Netty 增强写 FlushConsolidationHandler]]></title>
         <id>https://jiangjinxinn.github.io/post/netty-zeng-qiang-xie/</id>
@@ -842,60 +1106,6 @@ Process finished with exit code 0
         <content type="html"><![CDATA[<p>“	英语：I've seen things you people wouldn't believe. Attack ships on fire off the shoulder of Orion. I watched C-beams glitter in the dark near the Tannhäuser Gate. All those moments will be lost in time, like tears in rain. Time to die.	”</p>
 <p>（我曾见过令你们人类难以置信的事情。我看到过战舰在猎户座肩旁熊熊燃烧，也曾看到Ｃ射线在唐怀瑟之门旁的黑暗里闪耀。所有的那些时刻，都将消逝在时光中，一如泪水，消失在雨中。死亡的时刻到了。）</p>
 <p><a href="https://zh.wikipedia.org/wiki/%E9%9B%A8%E4%B8%AD%E6%B3%AA%E6%B0%B4%E7%8B%AC%E7%99%BD#cite_note-4">wikipedia</a></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Shading-JDBC]]></title>
-        <id>https://jiangjinxinn.github.io/post/shading-jdbc/</id>
-        <link href="https://jiangjinxinn.github.io/post/shading-jdbc/">
-        </link>
-        <updated>2019-10-06T13:42:56.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="流程">流程</h2>
-<p>做在 jdbc 层面上</p>
-<h2 id="分库分表策略">分库分表策略</h2>
-<ul>
-<li>垂直</li>
-<li>水平</li>
-<li>
-<ul>
-<li>绑定表</li>
-</ul>
-</li>
-</ul>
-<h2 id="分片">分片</h2>
-<h3 id="新增">新增</h3>
-<h2 id="行表达式">行表达式</h2>
-<p>实现动机：配置的简化与一体化<br>
-语法：使用 Groovy</p>
-<p>sql between 时会抛出异常<code>org.springframework.dao.InvalidDataAccessApiUsageException: Inline strategy cannot support range sharding.; nested exception is java.lang.IllegalStateException: Inline strategy cannot support range sharding.</code></p>
-<h2 id="分布式-id-生成">分布式 id 生成</h2>
-<h3 id="雪花算法默认">雪花算法（默认）</h3>
-<p><img src="https://jiangjinxinn.github.io//post-images/1570369804031.png" alt="" loading="lazy"><br>
-Sharding-JDBC 中生成后插入数据库中。</p>
-<ol>
-<li>时钟回拨<br>
-服务器时钟回拨会导致产生重复序列，因此默认分布式主键生成器提供了一个最大容忍的时钟回拨毫秒 数。 如果时钟回拨的时间超过最大容忍的毫秒数阈值，则程序报错；如果在可容忍的范围内，默认分布式主键生成器会等待时钟同步到最后一次主键生成的时间后再继续工作。 最大容忍的时钟回拨毫秒数的默认值为0，可通过属性设置。<br>
-https://www.jianshu.com/p/98c202f64652</li>
-<li>worker id<br>
-重复 worker id 会产生相同的 id https://cloud.tencent.com/developer/article/1074907<br>
-worker id 如何配置？</li>
-<li>没有并发量的情况下的话，序列号位几乎都是 1，根据路由规则都会路由到一个表中</li>
-</ol>
-<h2 id="分布式事务">分布式事务</h2>
-<p>本地事务：ACID<br>
-分布式事务：BASE，通过业务逻辑将互斥操作从资源层面上移至业务层面。通过放宽对强一致性要求，来换取系统吞吐量的提升</p>
-<h3 id="xa">XA</h3>
-<p><img src="https://jiangjinxinn.github.io//post-images/1570501311460.png" alt="" loading="lazy"><br>
-两阶段事务提交采用X/OPEN组织定义的DTP 模型，通过抽象出来的AP、TM、RM 的概念可以保证事务的强一致性。其中 TM 和 RM 之间采用 XA 协议进行双向通信。与传统的本地事务相比，XA 事务增加了 prepare 阶段，数据库除了被动接受提交指令以外，还可以反向通知调用方事务是否可以被提交。因此 TM可以收集各分支事务的prepare 结果，最后进行原子提交，保证事务的强一致性。<br>
-分为准备阶段和提交阶段。每个参与者要么发送失败，要么在本地执行事务，写本地的 redo、undo 日志，但不提交。协调者收到了参与者失败消息或者超时消息，直接给每个参与者发送回滚（rollback）消息，否则发送提交（commit）消息。<br>
-需要在多个节点之间进行协调，而各节点对锁资源的释放必须等到事务最终提交的时候。这样比起单阶段提交，会消耗更多时间。事务执行时间延长，意味着锁资源发生冲突的概率增加。</p>
-<h3 id="saga">Saga</h3>
-<p>多个短时事务组成的长时事务，在分布式场景下，我们把一个 Saga 分布式事务看做一个由多个本地事务组成的事务，每个事务都有一个与之对应的补偿事务。在 Saga 事务执行过程中，某一个出错后，Saga 事务会终止，同时会调用对应的补偿事务完成相关的恢复操作<br>
-自动反向补偿。Saga 定义了一个事务中的每个子事务都对应一个反向补偿操作。Saga 事务管理器会根据执行结果生成一张有向无环图，并在执行回滚的时候根据该图一次执行反向补偿操作。Saga 事务管理器只用于何时重试，何时补偿，不负责补偿的内容，补偿的具体操作由开发者自行提供。<br>
-Sharding-JDBC 采用了反向 sql 技术，将对数据库的更新操作的 sql 自动生成反向 sql，并交由 <a href="https://github.com/apache/servicecomb-saga-actuator">saga-actuator</a> 执行。</p>
-<h3 id="seate">Seate</h3>
-<p><a href="https://github.com/seata/seata">Seate</a><br>
-<a href="https://shardingsphere.apache.org/document/current/cn/features/transaction/principle/base-transaction-seata/">Sharding-JDBC 的实现原理</a>。整合Seata AT事务时，需要把TM，RM，TC的模型融入到ShardingSphere 分布式事务的SPI的生态中。在数据库资源上，Seata通过对接 DataSource 接口，让JDBC操作可以同 TC 进行 RPC 通信。同样，ShardingSphere 也是面向 DataSource 接口对用户配置的物理 DataSource 进行了聚合，因此把物理 DataSource 二次包装为 Seata 的 DataSource 后，就可以把 Seata AT 事务融入到 ShardingSphere 的分片中。</p>
 ]]></content>
     </entry>
 </feed>
