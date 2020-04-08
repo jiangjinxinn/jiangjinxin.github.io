@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1586223278037">
+<link rel="shortcut icon" href="https://jiangjinxinn.github.io//favicon.ico?v=1586357466427">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://jiangjinxinn.github.io//styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://jiangjinxinn.github.io/">
-        <img src="https://jiangjinxinn.github.io//images/avatar.png?v=1586223278037" class="site-logo">
+        <img src="https://jiangjinxinn.github.io//images/avatar.png?v=1586357466427" class="site-logo">
         <h1 class="site-title">空调房</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -101,7 +101,7 @@
 <blockquote>
 <p>Flush operations are generally speaking expensive as these may trigger a syscall on the transport level. Thus it is in most cases (where write latency can be traded with throughput) a good idea to try to minimize flush operations as much as possible.</p>
 </blockquote>
-<p>相反，我们可以通过添加一个增强写的 Netty 的 FlushConsolidationHandler来处理这个事情，这个 Handler 有一个参数 explicitFlushAfterFlushes 可以控制拦截几次 flush 后才进行真正的 flush操作。</p>
+<p><strong>我们可以通过添加一个增强写的 Netty 的 FlushConsolidationHandler来处理这个事情，这个 Handler 有一个参数 explicitFlushAfterFlushes 可以控制拦截几次 flush 后才进行真正的 flush操作。</strong></p>
 <p>这里提到 FlushConsolidationHandler 可以拦截，那么不用想，肯定是继承了 ChannelDuplexHandler。</p>
 <p>这里不知道大家有没有一个问题，在添加 FlushConsolidationHandler 设定了 explicitFlushAfterFlushes 之后看，如果 flush 次数不够难道就一直不 flush 出去了，需要等到后边一次请求进来的出站事件到来后 flush 够了才能写吗？</p>
 <p>这个问题肯定不是的，如果是的话就是个严重的缺陷的。</p>
@@ -130,7 +130,7 @@ public void flush(ChannelHandlerContext ctx) throws Exception {
 </code></pre>
 <p>Netty 源码上的注解已经很好的说明了，有一个变量 readInProgress 标识是否正在读（即读事件未结束），这里我们先不查看 consolidateWhenNoReadInProgress 这个分支。如果 readInProgress 标记正在读 FlushConsolidationHandler 就会进行继续进行拦截，直到 flush 次数满足了后才会进行最后的 flush，读事件已经结束的话直接调用最后的 flush</p>
 <p>这就解答了上面的问题，如果 flush 次数不够，但是读事件已经结束了，依然会进行 flush。</p>
-<p>这时不知道大家有没有一个问题，那就是感觉这个 FlushConsolidationHandler 没什么用，因为作为开发者，我只要不调用 ctx.writeAndFlush() 即可，只调用 ctx.write ()，然后再后续 flush 掉。</p>
+<p>这时不知道大家有没有一个问题，那就是感觉这个 FlushConsolidationHandler 没什么用，因为作为开发者，我只要不调用 ctx.writeAndFlush() 即可，只调用 ctx.write ()，然后再最后 flush 掉。</p>
 <p>对的，这个在 Netty 的官方 demo 中就是这样实例的，只在读事件结束后才进行 ctx.flush()</p>
 <pre><code>/**
  * Handler implementation for the echo server.
