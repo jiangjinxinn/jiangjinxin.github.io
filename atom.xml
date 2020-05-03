@@ -2,13 +2,58 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://jiangjinxinn.github.io/</id>
     <title>空调房</title>
-    <updated>2020-05-01T02:42:11.962Z</updated>
+    <updated>2020-05-03T20:03:17.205Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://jiangjinxinn.github.io/"/>
     <link rel="self" href="https://jiangjinxinn.github.io/atom.xml"/>
     <logo>https://jiangjinxinn.github.io/images/avatar.png</logo>
     <icon>https://jiangjinxinn.github.io/favicon.ico</icon>
     <rights>All rights reserved 2020, 空调房</rights>
+    <entry>
+        <title type="html"><![CDATA[LoadBalance 自动装配]]></title>
+        <id>https://jiangjinxinn.github.io/post/loadbalance-zi-dong-zhuang-pei/</id>
+        <link href="https://jiangjinxinn.github.io/post/loadbalance-zi-dong-zhuang-pei/">
+        </link>
+        <updated>2020-05-03T19:36:38.000Z</updated>
+        <content type="html"><![CDATA[<p>spring cloud 这块有点厉害，版本升级后包名各种改。。feign、openfeign、netflixfeign 傻傻分不清楚</p>
+<p>客户端负载均衡调用就有三种：</p>
+<ol>
+<li>discovery client</li>
+<li>ribbon loadbalanced resttemplate</li>
+<li>feignclient</li>
+</ol>
+<p>虽然这些之间都是有联系的，但搞这么多概念烦不烦啊。。我初来乍到使用 spring cloud 有点懵</p>
+<p>原来一直是用第三种 feign client，今天由于想要实现个 feign 的缓存实现，仔细看了下代码</p>
+<p>看到第二种 ribbon 的时候，看晕了，记录下收获</p>
+<ol>
+<li>@Qualifier 的使用</li>
+</ol>
+<p>注解 <code>@Qualifier</code> 标注了 <code>@Inherited</code>  元注解，并且在其他自定义注解上添加 <code>@Qualifier</code> 注解的时候可以做为 <code>qualifier</code> 使用</p>
+<blockquote>
+<p>This annotation may be used on a field or parameter as a qualifier for<br>
+candidate beans when autowiring. It may also be used to annotate other<br>
+custom annotations that can then in turn be used as qualifiers.</p>
+</blockquote>
+<p><code>@LoadBalanced</code> 注解就被添加了 <code>@Qualifier</code> 注解所以在 <code>LoadBalancerAutoConfiguration</code> 中可以实现只注入被 <code>@LoadBalanced</code> 标记了的 <code>Resttemplatet</code>。</p>
+<figure data-type="image" tabindex="1"><img src="https://jiangjinxinn.github.io//post-images/1588535143322.png" alt="" loading="lazy"></figure>
+<ol start="2">
+<li>自动装配在实现依赖中打开</li>
+</ol>
+<p>pring-cloud-commons 包下的 <code>org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration</code><br>
+并不会自动装配，只有添加了 <code>spring-cloud-starter-loadbalancer</code> 才会自动装配。</p>
+<pre><code class="language-xml">    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-cloud-starter-loadbalancer&lt;/artifactId&gt;
+      &lt;version&gt;2.2.2.RELEASE&lt;/version&gt;
+      &lt;scope&gt;compile&lt;/scope&gt;
+    &lt;/dependency&gt;
+</code></pre>
+<p>按照 spring cloud 官方的说法，spring cloud common 是抽象实现，在 spring cloud 的不同实现中使用，所以像上述的 loadbalancer 在没有引 loadbalancer 的依赖的时候是不会自动装配的</p>
+<blockquote>
+<p>Spring Cloud Commons delivers features as two libraries: Spring Cloud Context and Spring Cloud Commons. Spring Cloud Context provides utilities and special services for the ApplicationContext of a Spring Cloud application (bootstrap context, encryption, refresh scope and environment endpoints). Spring Cloud Commons is a set of abstractions and common classes used in different Spring Cloud implementations (eg. Spring Cloud Netflix vs. Spring Cloud Consul).</p>
+</blockquote>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Spring-Cloud-Config]]></title>
         <id>https://jiangjinxinn.github.io/post/spring-cloud-config/</id>
@@ -1117,17 +1162,6 @@ Process finished with exit code 0
 <code>com.alibaba.nacos.naming.core.Service#SERVICE_NAME_SYNTAX</code></p>
 <pre><code class="language-java">    private static final String SERVICE_NAME_SYNTAX = &quot;[0-9a-zA-Z@\\.:_-]+&quot;;
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[雨中泪水独白（Tears in rain monologue）]]></title>
-        <id>https://jiangjinxinn.github.io/post/yu-zhong-lei-shui-du-bai-tears-in-rain-monologue/</id>
-        <link href="https://jiangjinxinn.github.io/post/yu-zhong-lei-shui-du-bai-tears-in-rain-monologue/">
-        </link>
-        <updated>2019-10-09T16:18:17.000Z</updated>
-        <content type="html"><![CDATA[<p>“	英语：I've seen things you people wouldn't believe. Attack ships on fire off the shoulder of Orion. I watched C-beams glitter in the dark near the Tannhäuser Gate. All those moments will be lost in time, like tears in rain. Time to die.	”</p>
-<p>（我曾见过令你们人类难以置信的事情。我看到过战舰在猎户座肩旁熊熊燃烧，也曾看到Ｃ射线在唐怀瑟之门旁的黑暗里闪耀。所有的那些时刻，都将消逝在时光中，一如泪水，消失在雨中。死亡的时刻到了。）</p>
-<p><a href="https://zh.wikipedia.org/wiki/%E9%9B%A8%E4%B8%AD%E6%B3%AA%E6%B0%B4%E7%8B%AC%E7%99%BD#cite_note-4">wikipedia</a></p>
 ]]></content>
     </entry>
 </feed>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>Stream 生成勾股数 | 空调房</title>
+<title>LoadBalance 自动装配 | 空调房</title>
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -92,77 +92,56 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">Stream 生成勾股数</h2>
-            <div class="post-date">2019-11-06</div>
+            <h2 class="post-title">LoadBalance 自动装配</h2>
+            <div class="post-date">2020-05-04</div>
             
             <div class="post-content">
-              <p>突然想起去年看的《java8 实战》上的用 Stream 生成勾股数的例子。这里试一下。<br>
-关键在于 flatMap 和生成先进行过滤再生成数组，虽然计算了两次开方，但是生成数组的开销更大。</p>
-<pre><code class="language-java">import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-class Scratch {
-    public static void main(String[] args) {
-        long start = System.currentTimeMillis();
-        Stream&lt;int[]&gt; pythagoreanTriple = IntStream.rangeClosed(1, 100).boxed()
-                .flatMap(a -&gt; IntStream.rangeClosed(a, 100)
-                        .filter(b -&gt; Math.sqrt(a * a + b * b) % 1 == 0)
-                        .mapToObj(b -&gt; new int[]{a, b, (int) Math.sqrt(a * a + b * b)}));
-
-        pythagoreanTriple.limit(10).forEach(t -&gt; System.out.println(t[0] + &quot; &quot; + t[1] + &quot; &quot; + t[2]));
-        long end = System.currentTimeMillis();
-        System.out.println(&quot;total time: &quot; + (end - start) + &quot;\n&quot;);
-
-
-        long start2 = System.currentTimeMillis();
-        Stream&lt;int[]&gt; pythagoreanTriple2 = IntStream.rangeClosed(1, 100).boxed()
-                .flatMap(a -&gt; IntStream.rangeClosed(a, 100)
-                        .mapToObj(b -&gt; new int[]{a, b, (int) Math.sqrt(a * a + b * b)}))
-                        .filter(t -&gt; Math.sqrt(t[2]) % 1 == 0);
-
-        pythagoreanTriple2.limit(10).forEach(t -&gt; System.out.println(t[0] + &quot; &quot; + t[1] + &quot; &quot; + t[2]));
-        long end2 = System.currentTimeMillis();
-        System.out.println(&quot;total time 2: &quot; + (end2 - start2) + &quot;\n&quot;);
-    }
-}
+              <p>spring cloud 这块有点厉害，版本升级后包名各种改。。feign、openfeign、netflixfeign 傻傻分不清楚</p>
+<p>客户端负载均衡调用就有三种：</p>
+<ol>
+<li>discovery client</li>
+<li>ribbon loadbalanced resttemplate</li>
+<li>feignclient</li>
+</ol>
+<p>虽然这些之间都是有联系的，但搞这么多概念烦不烦啊。。我初来乍到使用 spring cloud 有点懵</p>
+<p>原来一直是用第三种 feign client，今天由于想要实现个 feign 的缓存实现，仔细看了下代码</p>
+<p>看到第二种 ribbon 的时候，看晕了，记录下收获</p>
+<ol>
+<li>@Qualifier 的使用</li>
+</ol>
+<p>注解 <code>@Qualifier</code> 标注了 <code>@Inherited</code>  元注解，并且在其他自定义注解上添加 <code>@Qualifier</code> 注解的时候可以做为 <code>qualifier</code> 使用</p>
+<blockquote>
+<p>This annotation may be used on a field or parameter as a qualifier for<br>
+candidate beans when autowiring. It may also be used to annotate other<br>
+custom annotations that can then in turn be used as qualifiers.</p>
+</blockquote>
+<p><code>@LoadBalanced</code> 注解就被添加了 <code>@Qualifier</code> 注解所以在 <code>LoadBalancerAutoConfiguration</code> 中可以实现只注入被 <code>@LoadBalanced</code> 标记了的 <code>Resttemplatet</code>。</p>
+<figure data-type="image" tabindex="1"><img src="https://jiangjinxinn.github.io//post-images/1588535143322.png" alt="" loading="lazy"></figure>
+<ol start="2">
+<li>自动装配在实现依赖中打开</li>
+</ol>
+<p>pring-cloud-commons 包下的 <code>org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration</code><br>
+并不会自动装配，只有添加了 <code>spring-cloud-starter-loadbalancer</code> 才会自动装配。</p>
+<pre><code class="language-xml">    &lt;dependency&gt;
+      &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+      &lt;artifactId&gt;spring-cloud-starter-loadbalancer&lt;/artifactId&gt;
+      &lt;version&gt;2.2.2.RELEASE&lt;/version&gt;
+      &lt;scope&gt;compile&lt;/scope&gt;
+    &lt;/dependency&gt;
 </code></pre>
-<p>运行的结果</p>
-<pre><code>3 4 5
-5 12 13
-6 8 10
-7 24 25
-8 15 17
-9 12 15
-9 40 41
-10 24 26
-11 60 61
-12 16 20
-total time: 91
-
-1 1 1
-1 4 4
-1 9 9
-1 16 16
-1 25 25
-1 36 36
-1 49 49
-1 64 64
-1 81 81
-1 100 100
-total time 2: 3
-
-
-Process finished with exit code 0
-</code></pre>
+<p>按照 spring cloud 官方的说法，spring cloud common 是抽象实现，在 spring cloud 的不同实现中使用，所以像上述的 loadbalancer 在没有引 loadbalancer 的依赖的时候是不会自动装配的</p>
+<blockquote>
+<p>Spring Cloud Commons delivers features as two libraries: Spring Cloud Context and Spring Cloud Commons. Spring Cloud Context provides utilities and special services for the ApplicationContext of a Spring Cloud application (bootstrap context, encryption, refresh scope and environment endpoints). Spring Cloud Commons is a set of abstractions and common classes used in different Spring Cloud implementations (eg. Spring Cloud Netflix vs. Spring Cloud Consul).</p>
+</blockquote>
 
             </div>
             
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://jiangjinxinn.github.io/post/leetcode-cncom-ui-xiu-gai/">
+                <a href="https://jiangjinxinn.github.io/post/spring-cloud-config/">
                   <h3 class="post-title">
-                    leetcode-cn.com ui 修改
+                    Spring-Cloud-Config
                   </h3>
                 </a>
               </div>
